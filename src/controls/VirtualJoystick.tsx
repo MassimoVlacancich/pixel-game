@@ -72,8 +72,8 @@ export default function VirtualJoystick({ dirRef }: Props) {
     <div
       style={{
         position: 'absolute',
-        bottom: 28,
-        left: 28,
+        bottom: 'calc(28px + env(safe-area-inset-bottom))',
+        left: 'calc(28px + env(safe-area-inset-left))',
         width: BASE_SIZE,
         height: BASE_SIZE,
         borderRadius: '50%',

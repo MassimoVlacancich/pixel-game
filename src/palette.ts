@@ -1,15 +1,15 @@
 export const PALETTE = {
-  sakuraPink:   '#F4A7B9',
-  sakuraLight:  '#FAD4DF',
-  bark:         '#7B5E57',
-  grassGreen:   '#A8C5A0',
-  mountainBlue: '#8BA7C7',
-  snowWhite:    '#EEF0F3',
-  pathStone:    '#C8B89A',
-  skyPeach:     '#FFD9C0',
-  skyHorizon:   '#FFC5A8',
-  toriRed:      '#C0392B',
-  characterBody:'#5B8AD4',
-  characterSkin:'#F5CBA7',
-  characterHair:'#3D2B1F',
+  sakuraPink:    '#F28FAD',  // vivid cherry blossom
+  sakuraLight:   '#F5C2CD',  // soft blossom highlight
+  bark:          '#6B4226',  // deep warm brown
+  grassGreen:    '#7CB87A',  // saturated grass
+  mountainBlue:  '#5C84B0',  // rich slate blue
+  snowWhite:     '#F0F4FF',  // cool crisp white
+  pathStone:     '#B8A480',  // warm stone
+  skyPeach:      '#FFB89A',  // vivid warm horizon
+  skyHorizon:    '#FF9A7A',
+  toriRed:       '#CC2200',  // deep torii red
+  characterBody: '#4A7AC8',  // vivid blue kimono
+  characterSkin: '#F5CBA7',
+  characterHair: '#2A1800',  // very dark hair (doubles as outline-ish)
 } as const

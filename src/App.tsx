@@ -28,7 +28,6 @@ export default function App() {
         shadows="basic"
         camera={{ fov: 40, near: 0.1, far: 300, position: [0, 26, -6] }}
         style={{
-          imageRendering: 'pixelated',
           background: PALETTE.skyPeach,
           width: '100%',
           height: '100%',

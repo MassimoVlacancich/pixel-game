@@ -1,12 +1,15 @@
 import * as THREE from 'three'
 import { PALETTE } from '../palette'
+import { getToonGradient } from '../utils/toonGradient'
 
-const flatToon = (color: string) => {
-  const mat = new THREE.MeshToonMaterial({ color })
+function flatToon(color: string): THREE.MeshToonMaterial {
+  const mat = new THREE.MeshToonMaterial({ color, gradientMap: getToonGradient() })
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ;(mat as unknown as any).flatShading = true
   return mat
 }
+
+const OUTLINE_THIN = new THREE.MeshBasicMaterial({ color: '#0A1A2A', side: THREE.BackSide })
 
 interface MountainProps {
   position: [number, number, number]
@@ -16,17 +19,26 @@ interface MountainProps {
 function Mountain({ position, scale = 1 }: MountainProps) {
   return (
     <group position={position} scale={scale}>
+      {/* Main body with thin outline */}
       <mesh castShadow>
         <coneGeometry args={[8, 14, 6]} />
         <primitive object={flatToon(PALETTE.mountainBlue)} attach="material" />
       </mesh>
+      <mesh scale={1.04}>
+        <coneGeometry args={[8, 14, 6]} />
+        <primitive object={OUTLINE_THIN} attach="material" />
+      </mesh>
+
+      {/* Snow cap */}
       <mesh position={[0, 7.5, 0]} castShadow>
         <coneGeometry args={[2.8, 4.5, 6]} />
         <primitive object={flatToon(PALETTE.snowWhite)} attach="material" />
       </mesh>
+
+      {/* Dark base */}
       <mesh position={[0, -6.5, 0]} castShadow>
         <coneGeometry args={[9, 2.5, 6]} />
-        <primitive object={flatToon('#6B8AB0')} attach="material" />
+        <primitive object={flatToon('#3A5878')} attach="material" />
       </mesh>
     </group>
   )

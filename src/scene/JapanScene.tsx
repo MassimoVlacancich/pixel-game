@@ -62,8 +62,8 @@ export default function JapanScene({ characterRef, joystickDir }: JapanSceneProp
       <Character ref={characterRef} joystickDir={joystickDir} />
       <ThirdPersonCamera target={characterRef} />
 
-      {/* Pixel art post-processing */}
-      <PixelPostProcessing granularity={3} />
+      {/* Atmospheric vignette */}
+      <PixelPostProcessing />
     </>
   )
 }

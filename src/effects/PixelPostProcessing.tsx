@@ -1,13 +1,9 @@
-import { EffectComposer, Pixelation } from '@react-three/postprocessing'
+import { EffectComposer, Vignette } from '@react-three/postprocessing'
 
-interface PixelPostProcessingProps {
-  granularity?: number
-}
-
-export default function PixelPostProcessing({ granularity = 6 }: PixelPostProcessingProps) {
+export default function PixelPostProcessing() {
   return (
     <EffectComposer>
-      <Pixelation granularity={granularity} />
+      <Vignette eskil={false} offset={0.2} darkness={0.5} />
     </EffectComposer>
   )
 }
