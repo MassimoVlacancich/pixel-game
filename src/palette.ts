@@ -1,0 +1,15 @@
+export const PALETTE = {
+  sakuraPink:   '#F4A7B9',
+  sakuraLight:  '#FAD4DF',
+  bark:         '#7B5E57',
+  grassGreen:   '#A8C5A0',
+  mountainBlue: '#8BA7C7',
+  snowWhite:    '#EEF0F3',
+  pathStone:    '#C8B89A',
+  skyPeach:     '#FFD9C0',
+  skyHorizon:   '#FFC5A8',
+  toriRed:      '#C0392B',
+  characterBody:'#5B8AD4',
+  characterSkin:'#F5CBA7',
+  characterHair:'#3D2B1F',
+} as const
