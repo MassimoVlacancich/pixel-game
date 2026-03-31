@@ -3,17 +3,66 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>Japan Pixel Game</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { overflow: hidden; background: #FFD9C0; }
       #root { width: 100vw; height: 100vh; }
       canvas { image-rendering: pixelated; image-rendering: crisp-edges; }
+
+      /* Rotate-to-landscape overlay — shown only in portrait on touch devices */
+      #rotate-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #FFD9C0;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        font-family: monospace;
+        color: #5B4A3F;
+      }
+      #rotate-overlay .icon {
+        font-size: 52px;
+        animation: spin 1.8s ease-in-out infinite;
+      }
+      #rotate-overlay p {
+        font-size: 16px;
+        letter-spacing: 1px;
+      }
+      @keyframes spin {
+        0%   { transform: rotate(0deg);   }
+        40%  { transform: rotate(90deg);  }
+        100% { transform: rotate(90deg);  }
+      }
+
+      @media (orientation: portrait) and (hover: none) and (pointer: coarse) {
+        #rotate-overlay { display: flex; }
+      }
     </style>
   </head>
   <body>
+    <div id="rotate-overlay">
+      <div class="icon">📱</div>
+      <p>Rotate your device to play</p>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Request landscape lock on supported browsers (PWA / fullscreen)
+      async function lockLandscape() {
+        try {
+          await screen.orientation.lock('landscape')
+        } catch (_) {
+          // Not supported or not in fullscreen — overlay handles it
+        }
+      }
+      document.addEventListener('pointerdown', lockLandscape, { once: true })
+    </script>
   </body>
 </html>
