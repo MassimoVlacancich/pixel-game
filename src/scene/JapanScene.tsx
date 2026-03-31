@@ -6,15 +6,17 @@ import Shrine from './Shrine'
 import Particles from './Particles'
 import Character from '../character/Character'
 import type { CharacterRef } from '../character/Character'
+import type { JoystickDir } from '../controls/VirtualJoystick'
 import ThirdPersonCamera from '../camera/ThirdPersonCamera'
 import PixelPostProcessing from '../effects/PixelPostProcessing'
 import { PALETTE } from '../palette'
 
 interface JapanSceneProps {
   characterRef: React.RefObject<CharacterRef | null>
+  joystickDir: React.MutableRefObject<JoystickDir>
 }
 
-export default function JapanScene({ characterRef }: JapanSceneProps) {
+export default function JapanScene({ characterRef, joystickDir }: JapanSceneProps) {
   return (
     <>
       {/* Lighting */}
@@ -32,9 +34,7 @@ export default function JapanScene({ characterRef }: JapanSceneProps) {
         shadow-camera-top={30}
         shadow-camera-bottom={-30}
       />
-      <hemisphereLight
-        args={['#FFD9C0', '#A8C5A0', 0.5]}
-      />
+      <hemisphereLight args={['#FFD9C0', '#A8C5A0', 0.5]} />
 
       {/* Sky */}
       <Sky
@@ -59,7 +59,7 @@ export default function JapanScene({ characterRef }: JapanSceneProps) {
       <Particles />
 
       {/* Character + camera */}
-      <Character ref={characterRef} />
+      <Character ref={characterRef} joystickDir={joystickDir} />
       <ThirdPersonCamera target={characterRef} />
 
       {/* Pixel art post-processing */}

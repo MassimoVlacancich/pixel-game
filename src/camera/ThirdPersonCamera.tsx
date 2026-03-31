@@ -8,8 +8,8 @@ interface ThirdPersonCameraProps {
   offset?: THREE.Vector3
 }
 
-// Birds-eye view: high up, slightly behind character
-const DEFAULT_OFFSET = new THREE.Vector3(0, 18, -14)
+// High top-down: steep angle, just enough tilt to see ahead
+const DEFAULT_OFFSET = new THREE.Vector3(0, 26, -6)
 
 export default function ThirdPersonCamera({
   target,

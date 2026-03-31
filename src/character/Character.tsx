@@ -2,14 +2,19 @@ import { forwardRef, useRef, useImperativeHandle } from 'react'
 import * as THREE from 'three'
 import { PALETTE } from '../palette'
 import { useCharacterControls } from './useCharacterControls'
+import type { JoystickDir } from '../controls/VirtualJoystick'
 
 export type CharacterRef = THREE.Group
 
-const Character = forwardRef<CharacterRef>((_, ref) => {
+interface CharacterProps {
+  joystickDir?: React.MutableRefObject<JoystickDir>
+}
+
+const Character = forwardRef<CharacterRef, CharacterProps>(({ joystickDir }, ref) => {
   const groupRef = useRef<THREE.Group>(null)
 
   useImperativeHandle(ref, () => groupRef.current!)
-  useCharacterControls(groupRef)
+  useCharacterControls(groupRef, joystickDir)
 
   return (
     <group ref={groupRef} position={[0, 0, -5]}>
