@@ -8,7 +8,8 @@ interface ThirdPersonCameraProps {
   offset?: THREE.Vector3
 }
 
-const DEFAULT_OFFSET = new THREE.Vector3(0, 5, -9)
+// Birds-eye view: high up, slightly behind character
+const DEFAULT_OFFSET = new THREE.Vector3(0, 18, -14)
 
 export default function ThirdPersonCamera({
   target,
@@ -32,11 +33,11 @@ export default function ThirdPersonCamera({
     )
 
     // Smooth follow
-    smoothPos.current.lerp(desired, 0.08)
+    smoothPos.current.lerp(desired, 0.12)
     camera.position.copy(smoothPos.current)
 
-    // Look at a point slightly above the character's feet
-    lookTarget.current.set(charPos.x, charPos.y + 1.2, charPos.z)
+    // Look at character center from above
+    lookTarget.current.set(charPos.x, charPos.y + 0.5, charPos.z)
     camera.lookAt(lookTarget.current)
   })
 

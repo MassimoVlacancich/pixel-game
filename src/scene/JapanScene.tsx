@@ -49,7 +49,7 @@ export default function JapanScene({ characterRef }: JapanSceneProps) {
       />
 
       {/* Atmosphere fog */}
-      <fog attach="fog" args={[PALETTE.skyPeach, 35, 90]} />
+      <fog attach="fog" args={[PALETTE.skyPeach, 50, 120]} />
 
       {/* World */}
       <Ground />
@@ -63,7 +63,7 @@ export default function JapanScene({ characterRef }: JapanSceneProps) {
       <ThirdPersonCamera target={characterRef} />
 
       {/* Pixel art post-processing */}
-      <PixelPostProcessing granularity={6} />
+      <PixelPostProcessing granularity={3} />
     </>
   )
 }

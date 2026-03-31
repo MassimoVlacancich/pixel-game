@@ -4,7 +4,7 @@ const TORII_RED = PALETTE.toriRed
 
 export default function Shrine() {
   return (
-    <group position={[0, 0, 20]}>
+    <group position={[0, 0, 14]}>
       {/* Left pillar */}
       <mesh position={[-2.2, 2.5, 0]} castShadow>
         <boxGeometry args={[0.4, 5, 0.4]} />

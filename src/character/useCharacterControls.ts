@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useKeyboard } from '../hooks/useKeyboard'
 
-const SPEED = 5
+const SPEED = 7
 const TURN_SPEED = 8
 
 export function useCharacterControls(groupRef: React.RefObject<THREE.Group | null>) {

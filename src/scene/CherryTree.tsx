@@ -54,15 +54,11 @@ function CherryTree({ position, scale = 1, variant = 0 }: CherryTreeProps) {
   )
 }
 
+// Three trees clustered in the playable area around the character start
 const TREE_POSITIONS: Array<[number, number, number]> = [
-  [-6, 0, 2],
-  [7, 0, 0],
-  [-9, 0, 10],
-  [8, 0, 8],
-  [-5, 0, 18],
-  [9, 0, 16],
-  [-7, 0, 25],
-  [6, 0, 22],
+  [-5, 0, 2],
+  [5.5, 0, 0],
+  [0, 0, 8],
 ]
 
 export default function CherryTrees() {
@@ -72,7 +68,7 @@ export default function CherryTrees() {
         <CherryTree
           key={i}
           position={[x, y, z]}
-          scale={0.85 + (i % 3) * 0.12}
+          scale={1.1 + (i % 3) * 0.15}
           variant={i}
         />
       ))}
