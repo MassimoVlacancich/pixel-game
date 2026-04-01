@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { PALETTE } from '../palette'
 import { getToonGradient } from '../utils/toonGradient'
+import StaticBody from './StaticBody'
 
 function flatToon(color: string): THREE.MeshToonMaterial {
   const mat = new THREE.MeshToonMaterial({ color, gradientMap: getToonGradient() })
@@ -29,45 +30,50 @@ function CherryTree({ position, scale = 1, variant = 0 }: CherryTreeProps) {
   const trunkMat = flatToon(PALETTE.bark)
 
   return (
-    <group position={position} scale={scale}>
-      {/* Trunk with outline */}
-      <mesh position={[0, 1.2, 0]} castShadow>
-        <cylinderGeometry args={[0.14, 0.22, 2.4, 5]} />
-        <primitive object={trunkMat} attach="material" />
-      </mesh>
-      <mesh position={[0, 1.2, 0]} scale={1.08}>
-        <cylinderGeometry args={[0.14, 0.22, 2.4, 5]} />
-        <primitive object={OUTLINE} attach="material" />
-      </mesh>
+    <StaticBody position={position} colliders={[
+      { type: 'cylinder', args: [1.2 * scale, 0.22 * scale], position: [0, 1.2 * scale, 0] },
+      { type: 'ball',     args: [1.5 * scale],                position: [0, 3.3 * scale, 0] },
+    ]}>
+      <group scale={scale}>
+        {/* Trunk with outline */}
+        <mesh position={[0, 1.2, 0]} castShadow>
+          <cylinderGeometry args={[0.14, 0.22, 2.4, 5]} />
+          <primitive object={trunkMat} attach="material" />
+        </mesh>
+        <mesh position={[0, 1.2, 0]} scale={1.08}>
+          <cylinderGeometry args={[0.14, 0.22, 2.4, 5]} />
+          <primitive object={OUTLINE} attach="material" />
+        </mesh>
 
-      {/* Main blossom */}
-      <mesh position={[0, 3.2, 0]} castShadow>
-        <icosahedronGeometry args={[1.2, 0]} />
-        <primitive object={bMat} attach="material" />
-      </mesh>
-      <mesh position={[0, 3.2, 0]} scale={1.07}>
-        <icosahedronGeometry args={[1.2, 0]} />
-        <primitive object={OUTLINE} attach="material" />
-      </mesh>
+        {/* Main blossom */}
+        <mesh position={[0, 3.2, 0]} castShadow>
+          <icosahedronGeometry args={[1.2, 0]} />
+          <primitive object={bMat} attach="material" />
+        </mesh>
+        <mesh position={[0, 3.2, 0]} scale={1.07}>
+          <icosahedronGeometry args={[1.2, 0]} />
+          <primitive object={OUTLINE} attach="material" />
+        </mesh>
 
-      {/* Side clusters */}
-      <mesh position={[-0.9, 2.8, 0.2]} castShadow>
-        <icosahedronGeometry args={[0.85, 0]} />
-        <primitive object={bMat} attach="material" />
-      </mesh>
-      <mesh position={[0.85, 2.9, -0.2]} castShadow>
-        <icosahedronGeometry args={[0.9, 0]} />
-        <primitive object={bMat} attach="material" />
-      </mesh>
-      <mesh position={[0.2, 2.6, 0.8]} castShadow>
-        <icosahedronGeometry args={[0.7, 0]} />
-        <primitive object={bLightMat} attach="material" />
-      </mesh>
-      <mesh position={[0.1, 4.1, 0]} castShadow>
-        <icosahedronGeometry args={[0.6, 0]} />
-        <primitive object={bLightMat} attach="material" />
-      </mesh>
-    </group>
+        {/* Side clusters */}
+        <mesh position={[-0.9, 2.8, 0.2]} castShadow>
+          <icosahedronGeometry args={[0.85, 0]} />
+          <primitive object={bMat} attach="material" />
+        </mesh>
+        <mesh position={[0.85, 2.9, -0.2]} castShadow>
+          <icosahedronGeometry args={[0.9, 0]} />
+          <primitive object={bMat} attach="material" />
+        </mesh>
+        <mesh position={[0.2, 2.6, 0.8]} castShadow>
+          <icosahedronGeometry args={[0.7, 0]} />
+          <primitive object={bLightMat} attach="material" />
+        </mesh>
+        <mesh position={[0.1, 4.1, 0]} castShadow>
+          <icosahedronGeometry args={[0.6, 0]} />
+          <primitive object={bLightMat} attach="material" />
+        </mesh>
+      </group>
+    </StaticBody>
   )
 }
 

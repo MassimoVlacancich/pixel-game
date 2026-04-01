@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git checkout:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit -m 'chore: initialize empty prod branch:*)",
+      "Bash(git push:*)",
+      "Bash(gh repo:*)",
+      "Bash(where gh:*)",
+      "Bash(git remote:*)",
+      "Bash(npx -y @gitbeaker/cli)",
+      "Bash(command -v hub)",
+      "Bash(winget install:*)",
+      "Bash(export PATH=\"$PATH:/c/Program Files/GitHub CLI\")",
+      "Bash(gh --version)",
+      "Bash(gh auth:*)",
+      "Read(//c/Program Files/GitHub CLI//**)",
+      "Read(//c/Program Files \\(x86\\)/**)"
+    ]
+  }
+}

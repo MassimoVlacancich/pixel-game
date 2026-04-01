@@ -51,9 +51,8 @@ export default function VirtualJoystick({ dirRef }: Props) {
     }
 
     const norm = dist > 8 ? Math.min(dist / MAX_DIST, 1) : 0
-    dirRef.current.x = norm * Math.cos(angle)
-    // dy is screen-down = world +Z (away from camera)
-    dirRef.current.z = norm * Math.sin(angle)
+    dirRef.current.x = -(norm * Math.cos(angle))
+    dirRef.current.z = -(norm * Math.sin(angle))
   }, [dirRef])
 
   const onPointerUp = useCallback((e: React.PointerEvent) => {

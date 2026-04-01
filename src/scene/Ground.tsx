@@ -1,3 +1,4 @@
+import { RigidBody, CuboidCollider } from '@react-three/rapier'
 import { PALETTE } from '../palette'
 import { getToonGradient } from '../utils/toonGradient'
 
@@ -5,6 +6,15 @@ export default function Ground() {
   const gradient = getToonGradient()
   return (
     <group>
+      {/* Physics: flat ground + invisible boundary walls */}
+      <RigidBody type="fixed" colliders={false}>
+        <CuboidCollider args={[40, 0.1, 40]} position={[0, -0.1, 0]} />
+        <CuboidCollider args={[40, 10, 0.5]} position={[0, 5, -40.5]} />
+        <CuboidCollider args={[40, 10, 0.5]} position={[0, 5, 40.5]} />
+        <CuboidCollider args={[0.5, 10, 40]} position={[-40.5, 5, 0]} />
+        <CuboidCollider args={[0.5, 10, 40]} position={[40.5, 5, 0]} />
+      </RigidBody>
+
       {/* Grass base */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[80, 80, 16, 16]} />

@@ -6,9 +6,12 @@ import VirtualJoystick from './controls/VirtualJoystick'
 import type { CharacterRef } from './character/Character'
 import type { JoystickDir } from './controls/VirtualJoystick'
 
+const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+
 export default function App() {
   const characterRef = useRef<CharacterRef>(null)
   const joystickDir = useRef<JoystickDir>({ x: 0, z: 0 })
+  const jumpRef = useRef(false)
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -26,7 +29,7 @@ export default function App() {
         gl={{ antialias: false }}
         dpr={1}
         shadows="basic"
-        camera={{ fov: 40, near: 0.1, far: 300, position: [0, 26, -6] }}
+        camera={{ fov: 40, near: 0.1, far: 300, position: [0, 14, -16] }}
         style={{
           background: PALETTE.skyPeach,
           width: '100%',
@@ -35,14 +38,38 @@ export default function App() {
         }}
       >
         <Suspense fallback={null}>
-          <JapanScene characterRef={characterRef} joystickDir={joystickDir} />
+          <JapanScene characterRef={characterRef} joystickDir={joystickDir} jumpRef={jumpRef} />
         </Suspense>
       </Canvas>
 
-      {/* Virtual joystick — always visible, works on both touch and mouse */}
-      <VirtualJoystick dirRef={joystickDir} />
+      {isTouchDevice && <VirtualJoystick dirRef={joystickDir} />}
 
-      {/* Keyboard hint — hidden on touch devices */}
+      {/* Mobile jump button */}
+      {isTouchDevice && (
+        <div
+          onPointerDown={() => { jumpRef.current = true }}
+          style={{
+            position: 'absolute',
+            bottom: 'calc(28px + env(safe-area-inset-bottom))',
+            right: 'calc(28px + env(safe-area-inset-right))',
+            width: 64,
+            height: 64,
+            borderRadius: '50%',
+            background: 'rgba(255,255,255,0.22)',
+            border: '2.5px solid rgba(255,255,255,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            touchAction: 'none',
+            userSelect: 'none',
+            color: 'rgba(255,255,255,0.85)',
+            fontSize: 22,
+          }}
+        >
+          ↑
+        </div>
+      )}
+
       <div style={{
         position: 'absolute',
         bottom: 20,
@@ -56,7 +83,7 @@ export default function App() {
         letterSpacing: 1,
         pointerEvents: 'none',
       }}>
-        WASD / ↑↓←→
+        {isTouchDevice ? null : 'WASD / ↑↓←→   Space: jump   [`] orbit'}
       </div>
     </div>
   )
