@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { PALETTE } from '../palette'
 import { getToonGradient } from '../utils/toonGradient'
+import StaticBody from './StaticBody'
 
 const OUTLINE = new THREE.MeshBasicMaterial({ color: '#1A0800', side: THREE.BackSide })
 
@@ -71,6 +72,21 @@ export default function Shrine() {
         <OBox args={[0.65, 0.3, 0.65]} color={PALETTE.pathStone} position={[0, 0.85, 0]} scale={1.06} />
         <OBox args={[0.4, 0.3, 0.4]} color={PALETTE.snowWhite} position={[0, 1.15, 0]} scale={1.06} />
       </group>
+
+      {/* Physics colliders */}
+      <StaticBody colliders={[
+        // Pillars
+        { type: 'box', args: [0.2,   2.5,   0.2],   position: [-2.2, 2.5,  0] },
+        { type: 'box', args: [0.2,   2.5,   0.2],   position: [ 2.2, 2.5,  0] },
+        // Kasagi top beam
+        { type: 'box', args: [2.8,   0.175, 0.275], position: [0,   5.3,  0] },
+        // Nuki lower beam
+        { type: 'box', args: [2.4,   0.11,  0.175], position: [0,   4.1,  0] },
+        // Left lantern stack
+        { type: 'box', args: [0.325, 0.725, 0.325], position: [-3.8, 0.725, 0.5] },
+        // Right lantern stack
+        { type: 'box', args: [0.325, 0.725, 0.325], position: [ 3.8, 0.725, 0.5] },
+      ]} />
     </group>
   )
 }

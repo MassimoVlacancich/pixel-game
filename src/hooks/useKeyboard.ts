@@ -5,6 +5,7 @@ export type KeyMap = {
   backward: boolean
   left: boolean
   right: boolean
+  jump: boolean
 }
 
 const KEY_BINDINGS: Record<string, keyof KeyMap> = {
@@ -16,6 +17,7 @@ const KEY_BINDINGS: Record<string, keyof KeyMap> = {
   ArrowLeft: 'left',
   KeyD: 'right',
   ArrowRight: 'right',
+  Space: 'jump',
 }
 
 export function useKeyboard(): React.MutableRefObject<KeyMap> {
@@ -24,10 +26,12 @@ export function useKeyboard(): React.MutableRefObject<KeyMap> {
     backward: false,
     left: false,
     right: false,
+    jump: false,
   })
 
   useEffect(() => {
     const onDown = (e: KeyboardEvent) => {
+      if (e.repeat) return
       const key = KEY_BINDINGS[e.code]
       if (key) keys.current[key] = true
     }
