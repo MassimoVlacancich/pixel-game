@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Japan Pixel Game</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        overflow: hidden;
+        background: #FFB89A;
+        /* safe-area padding so nothing is behind notch/home bar */
+        padding: env(safe-area-inset-top) env(safe-area-inset-right)
+                 env(safe-area-inset-bottom) env(safe-area-inset-left);
+      }
+      /* 100dvh = dynamic viewport height, excludes browser chrome on mobile */
+      #root { width: 100vw; height: 100dvh; }
+
+      /* Rotate-to-landscape overlay — touch portrait only */
+      #rotate-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #FFB89A;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        font-family: monospace;
+        color: #5B4A3F;
+      }
+      #rotate-overlay .icon { font-size: 52px; animation: spin 1.8s ease-in-out infinite; }
+      #rotate-overlay p { font-size: 16px; letter-spacing: 1px; }
+      @keyframes spin {
+        0%   { transform: rotate(0deg);  }
+        40%  { transform: rotate(90deg); }
+        100% { transform: rotate(90deg); }
+      }
+      @media (orientation: portrait) and (hover: none) and (pointer: coarse) {
+        #rotate-overlay { display: flex; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="rotate-overlay">
+      <div class="icon">📱</div>
+      <p>Rotate your device to play</p>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // On first interaction: fullscreen (hides browser chrome on Android) + landscape lock
+      async function enterFullscreen() {
+        try {
+          await document.documentElement.requestFullscreen({ navigationUI: 'hide' })
+        } catch (_) {}
+        try {
+          await screen.orientation.lock('landscape')
+        } catch (_) {}
+      }
+      document.addEventListener('pointerdown', enterFullscreen, { once: true })
+    </script>
+  </body>
+</html>
