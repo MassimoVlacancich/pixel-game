@@ -3,6 +3,9 @@
     "allow": [
       "Bash(git branch:*)",
       "Bash(git rebase:*)"
+    ],
+    "additionalDirectories": [
+      "d:\\Users\\massi\\Documents\\Projects\\pixel-game"
     ]
   }
 }
