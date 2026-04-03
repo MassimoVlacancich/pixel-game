@@ -5,6 +5,7 @@ import type { RigidBody as RapierRigidBody } from '@dimforge/rapier3d-compat'
 import * as THREE from 'three'
 import { useKeyboard } from '../hooks/useKeyboard'
 import type { JoystickDir } from '../controls/VirtualJoystick'
+import { useGameStore } from '../store/useGameStore'
 
 const SPEED = 7
 const TURN_SPEED = 15
@@ -36,6 +37,7 @@ export function useCharacterControls(
   jumpRef?: React.MutableRefObject<boolean>,
   joystickDir?: React.MutableRefObject<JoystickDir>,
   cameraAngle?: React.MutableRefObject<number>,
+  playerIndex: 0 | 1 = 0,
 ) {
   const keys = useKeyboard()
   const { world } = useRapier()
@@ -71,6 +73,10 @@ export function useCharacterControls(
     const cc = ccRef.current
     if (!group || !body || !cc) return
 
+    // Gate all input when paused
+    const screen = useGameStore.getState().screen
+    if (screen === 'PAUSED' || screen === 'GAME_OVER' || screen === 'LEVEL_COMPLETE') return
+
     // Use grounded state from end of last frame
     const isGrounded = isGroundedRef.current
 
@@ -89,8 +95,9 @@ export function useCharacterControls(
     }
 
     const gamepads = navigator.getGamepads()
-    for (const gp of gamepads) {
-      if (!gp) continue
+    // Player N reads gamepad N (two-controller 2P support)
+    const gp = gamepads[playerIndex]
+    if (gp) {
       direction.current.x -= dz(gp.axes[0] ?? 0)
       direction.current.z -= dz(gp.axes[1] ?? 0)
     }
@@ -110,10 +117,7 @@ export function useCharacterControls(
     const jumpPressed = jumpKey || (jumpRef?.current ?? false)
     if (jumpRef) jumpRef.current = false // consume mobile pulse
 
-    let gpJump = false
-    for (const gp of gamepads) {
-      if (gp?.buttons[0]?.pressed) { gpJump = true; break }
-    }
+    const gpJump = gamepads[playerIndex]?.buttons[0]?.pressed ?? false
 
     const keyEdge = jumpPressed && !wasKeyJump.current
     const gpEdge  = gpJump      && !wasGpJump.current
