@@ -3,6 +3,7 @@ import { readSave, writeSave } from '../save/saveManager'
 
 export type Screen =
   | 'MAIN_MENU'
+  | 'LEVEL_SELECT'
   | 'CHARACTER_SELECT'
   | 'LOADING'
   | 'PLAYING'
@@ -22,13 +23,19 @@ interface GameStore {
   player2CharacterId: string | null  // null = single player
   buddyCharacterId: string | null    // null = no buddy
   isTwoPlayer: boolean
+  batteryPct: number
+  hitEffect: { text: string; color: string; id: number } | null
 
   // Actions
   setScreen: (s: Screen) => void
+  setLevelIndex: (i: number) => void
   startLevel: (index: number) => void
   retryLevel: () => void
   completeLevel: (levelId: string) => void
   addScore: (delta: number) => void
+  setBattery: (n: number) => void
+  setHitEffect: (text: string, color: string) => void
+  clearHitEffect: () => void
   setPlayer1Character: (id: string) => void
   setPlayer2Character: (id: string | null) => void
   setBuddyCharacter: (id: string | null) => void
@@ -48,8 +55,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
   player2CharacterId: null,
   buddyCharacterId: 'hana',
   isTwoPlayer: false,
+  batteryPct: 100,
+  hitEffect: null,
 
   setScreen: (screen) => set({ screen }),
+  setLevelIndex: (levelIndex) => set({ levelIndex }),
+  setBattery: (batteryPct) => set({ batteryPct }),
 
   startLevel: (levelIndex) => {
     set({ screen: 'LOADING', levelIndex, score: 0 })
@@ -77,6 +88,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   addScore: (delta) => set((s) => ({ score: s.score + delta })),
+
+  setHitEffect: (text, color) =>
+    set((s) => ({ hitEffect: { text, color, id: (s.hitEffect?.id ?? 0) + 1 } })),
+  clearHitEffect: () => set({ hitEffect: null }),
 
   setPlayer1Character: (id) => set({ player1CharacterId: id }),
   setPlayer2Character: (id) => set({ player2CharacterId: id }),

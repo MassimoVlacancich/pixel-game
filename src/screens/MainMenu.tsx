@@ -41,7 +41,7 @@ export default function MainMenu() {
   }, [])
 
   const activate = (item: MenuItem) => {
-    if (item === 'PLAY') setScreen('CHARACTER_SELECT')
+    if (item === 'PLAY') setScreen('LEVEL_SELECT')
     // SETTINGS: placeholder
   }
 

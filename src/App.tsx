@@ -5,11 +5,14 @@ import { useGameStore } from './store/useGameStore'
 import { unlockAudio } from './audio/AudioManager'
 import LevelRunner from './game/LevelRunner'
 import MainMenu from './screens/MainMenu'
+import LevelSelect from './screens/LevelSelect'
 import CharacterSelect from './screens/CharacterSelect'
 import LevelComplete from './screens/LevelComplete'
 import LoadingScreen from './screens/LoadingScreen'
 import HUD from './hud/HUD'
+import BatteryDisplay from './hud/BatteryDisplay'
 import VirtualJoystick from './controls/VirtualJoystick'
+import { LEVELS } from './levels/levelRegistry'
 import type { CharacterRef } from './character/Character'
 import type { JoystickDir } from './controls/VirtualJoystick'
 
@@ -17,6 +20,7 @@ const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
 
 export default function App() {
   const screen = useGameStore((s) => s.screen)
+  const levelIndex = useGameStore((s) => s.levelIndex)
   const loadSave = useGameStore((s) => s.loadSave)
 
   const characterRef = useRef<CharacterRef>(null)
@@ -38,6 +42,7 @@ export default function App() {
     >
       {/* Screens without Canvas */}
       {screen === 'MAIN_MENU' && <MainMenu />}
+      {screen === 'LEVEL_SELECT' && <LevelSelect />}
       {screen === 'CHARACTER_SELECT' && <CharacterSelect />}
       {screen === 'LOADING' && <LoadingScreen />}
 
@@ -87,6 +92,9 @@ export default function App() {
           ) : undefined}
         />
       )}
+
+      {/* Battery HUD for drive level */}
+      {isInGame && LEVELS[levelIndex]?.sceneKey === 'DriveScene' && <BatteryDisplay />}
 
       {/* Level complete overlay */}
       {screen === 'LEVEL_COMPLETE' && <LevelComplete />}

@@ -15,7 +15,9 @@
       "Bash(gh --version)",
       "Bash(gh auth:*)",
       "Read(//c/Program Files/GitHub CLI//**)",
-      "Read(//c/Program Files \\(x86\\)/**)"
+      "Read(//c/Program Files \\(x86\\)/**)",
+      "Bash(grep -E '\\\\.\\(dae|dxf|obj|mtl|png|jpg|jpeg\\)$')",
+      "Bash(grep -oE '\\\\.[^.]+$')"
     ]
   }
 }

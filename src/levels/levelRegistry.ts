@@ -1,12 +1,14 @@
 export type CompletionCondition =
-  | { type: 'reach_point';    position: [number, number, number]; radius: number }
-  | { type: 'collect_items';  required: number; itemTag: string }
-  | { type: 'score_target';   target: number }
-  | { type: 'tutorial_steps'; steps: string[] }
+  | { type: 'reach_point';        position: [number, number, number]; radius: number }
+  | { type: 'collect_items';      required: number; itemTag: string }
+  | { type: 'score_target';       target: number }
+  | { type: 'tutorial_steps';     steps: string[] }
+  | { type: 'reach_destination';  distance: number }
 
 export type FailCondition =
-  | { type: 'fall_off';  threshold: number }   // y < threshold
-  | { type: 'timer';     seconds: number }
+  | { type: 'fall_off';    threshold: number }   // y < threshold
+  | { type: 'timer';       seconds: number }
+  | { type: 'battery_dead' }
   | { type: 'none' }
 
 export interface LevelConfig {
@@ -45,5 +47,17 @@ export const LEVELS: LevelConfig[] = [
       'Walk to the shrine to complete the level',
     ],
     bgmTrack: 'japan',
+  },
+  {
+    id: 'drive_ev',
+    index: 1,
+    name: 'Drive the EV',
+    sceneKey: 'DriveScene',
+    player1Start: [0, 0.5, 0],
+    player2Start: [0, 0.5, 0],
+    buddyStart: [0, 0.5, 0],
+    gravity: [0, -9.81, 0],
+    completion: { type: 'reach_destination', distance: 500 },
+    fail: { type: 'battery_dead' },
   },
 ]

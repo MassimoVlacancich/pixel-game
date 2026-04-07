@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(git branch:*)",
-      "Bash(git rebase:*)"
+      "Bash(git rebase:*)",
+      "Bash(xargs basename:*)"
     ],
     "additionalDirectories": [
       "d:\\Users\\massi\\Documents\\Projects\\pixel-game"
