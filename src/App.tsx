@@ -7,6 +7,7 @@ import LevelRunner from './game/LevelRunner'
 import MainMenu from './screens/MainMenu'
 import LevelSelect from './screens/LevelSelect'
 import CharacterSelect from './screens/CharacterSelect'
+import CarSelect from './screens/CarSelect'
 import LevelComplete from './screens/LevelComplete'
 import LoadingScreen from './screens/LoadingScreen'
 import HUD from './hud/HUD'
@@ -46,6 +47,7 @@ export default function App() {
       {screen === 'MAIN_MENU' && <MainMenu />}
       {screen === 'LEVEL_SELECT' && <LevelSelect />}
       {screen === 'CHARACTER_SELECT' && <CharacterSelect />}
+      {screen === 'CAR_SELECT' && <CarSelect />}
       {screen === 'LOADING' && <LoadingScreen />}
 
       {/* 3D Canvas — only while in-game */}

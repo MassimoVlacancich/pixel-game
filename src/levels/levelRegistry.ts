@@ -24,6 +24,8 @@ export interface LevelConfig {
   fail: FailCondition
   tutorialMessages?: string[]
   bgmTrack?: string
+  winSubtitle?: string  // first line shown on the level-complete overlay
+  winTitle?: string     // second line shown on the level-complete overlay
 }
 
 // ── Drive level tuning ────────────────────────────────────────────────────────
@@ -50,6 +52,8 @@ export const LEVELS: LevelConfig[] = [
       'Walk to the shrine to complete the level',
     ],
     bgmTrack: 'japan',
+    winSubtitle: 'You are now ready to pick up your EV!',
+    winTitle: 'Time to hit the road...',
   },
   {
     id: 'drive_ev',
@@ -62,5 +66,7 @@ export const LEVELS: LevelConfig[] = [
     gravity: [0, -9.81, 0],
     completion: { type: 'reach_destination', distance: DRIVE_LEVEL_DISTANCE },
     fail: { type: 'battery_dead' },
+    winSubtitle: 'You drove the EV all the way to the Lakes!',
+    winTitle: 'Time for some cake...',
   },
 ]

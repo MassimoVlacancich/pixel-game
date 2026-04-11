@@ -5,6 +5,7 @@ export type Screen =
   | 'MAIN_MENU'
   | 'LEVEL_SELECT'
   | 'CHARACTER_SELECT'
+  | 'CAR_SELECT'
   | 'LOADING'
   | 'PLAYING'
   | 'PAUSED'
@@ -23,6 +24,7 @@ interface GameStore {
   player2CharacterId: string | null  // null = single player
   buddyCharacterId: string | null    // null = no buddy
   isTwoPlayer: boolean
+  selectedCarId: string
   batteryPct: number
   hitEffect: { text: string; color: string; id: number } | null
   smudgeEffect: { type: 'barrel' | 'snowball'; id: number } | null
@@ -46,6 +48,7 @@ interface GameStore {
   setPlayer2Character: (id: string | null) => void
   setBuddyCharacter: (id: string | null) => void
   setTwoPlayer: (v: boolean) => void
+  setSelectedCar: (id: string) => void
   loadSave: () => void
   persistSave: () => void
 }
@@ -61,6 +64,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   player2CharacterId: null,
   buddyCharacterId: 'hana',
   isTwoPlayer: false,
+  selectedCarId: 'cybertruck',
   batteryPct: 100,
   hitEffect: null,
   smudgeEffect: null,
@@ -118,6 +122,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   setPlayer2Character: (id) => set({ player2CharacterId: id }),
   setBuddyCharacter: (id) => set({ buddyCharacterId: id }),
   setTwoPlayer: (v) => set({ isTwoPlayer: v, player2CharacterId: v ? 'hana' : null }),
+  setSelectedCar: (id) => set({ selectedCarId: id }),
 
   loadSave: () => {
     const data = readSave()
@@ -125,6 +130,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       unlockedLevels: data.unlockedLevels,
       bestScores: data.bestScores,
       player1CharacterId: data.player1CharacterId,
+      selectedCarId: data.selectedCarId ?? 'cybertruck',
       levelIndex: data.lastPlayedLevelIndex,
     })
   },
@@ -136,6 +142,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       unlockedLevels: s.unlockedLevels,
       bestScores: s.bestScores,
       player1CharacterId: s.player1CharacterId,
+      selectedCarId: s.selectedCarId,
       lastPlayedLevelIndex: s.levelIndex,
     })
   },

@@ -5,6 +5,8 @@ import { useMenuInput } from '../hooks/useMenuInput'
 import { px } from './MainMenu'
 import bg from '../assets/background1.png?url'
 
+const DRIVE_SCENE_KEY = 'DriveScene'
+
 const TEXT_OUTLINE = '-3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000'
 
 export default function LevelSelect() {
@@ -20,7 +22,7 @@ export default function LevelSelect() {
   const selectLevel = (i: number) => {
     if (!unlockedLevels.includes(i)) return
     setLevelIndex(i)
-    setScreen('CHARACTER_SELECT')
+    setScreen(LEVELS[i]?.sceneKey === DRIVE_SCENE_KEY ? 'CAR_SELECT' : 'CHARACTER_SELECT')
   }
 
   useMenuInput(0, (input) => {

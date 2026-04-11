@@ -2,7 +2,8 @@ import { useRef, useEffect } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { Text } from '@react-three/drei'
 import * as THREE from 'three'
-import CybertruckCar from './CybertruckCar'
+import DriveCarModel from './DriveCarModel'
+import { getCarById } from './carRegistry'
 import RoadTrees from './RoadTrees'
 import DriveSnow from './DriveSnow'
 import DriveHazards from './DriveHazards'
@@ -43,6 +44,7 @@ function CameraRig({
 }
 
 export default function DriveScene({ config }: LevelSceneProps) {
+  const carConfig = getCarById(useGameStore.getState().selectedCarId)
   const lanePos = useRef(0)
   const speed = useRef(0)
   const totalDist = useRef(0)
@@ -385,7 +387,7 @@ export default function DriveScene({ config }: LevelSceneProps) {
 
       {/* Car — rotation.y=PI so rear faces camera */}
       <group ref={carGroup} position={[0, 0, 0]} rotation={[0, Math.PI, 0]}>
-        <CybertruckCar speedRef={speed} wheelAngleRef={wheelAngleRef} />
+        <DriveCarModel config={carConfig} speedRef={speed} wheelAngleRef={wheelAngleRef} />
       </group>
     </>
   )
