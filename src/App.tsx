@@ -11,6 +11,8 @@ import LevelComplete from './screens/LevelComplete'
 import LoadingScreen from './screens/LoadingScreen'
 import HUD from './hud/HUD'
 import BatteryDisplay from './hud/BatteryDisplay'
+import SplatterOverlay from './hud/SplatterOverlay'
+import WinFade from './hud/WinFade'
 import VirtualJoystick from './controls/VirtualJoystick'
 import { LEVELS } from './levels/levelRegistry'
 import type { CharacterRef } from './character/Character'
@@ -93,8 +95,10 @@ export default function App() {
         />
       )}
 
-      {/* Battery HUD for drive level */}
+      {/* Battery HUD + splatter + win fade for drive level */}
       {isInGame && LEVELS[levelIndex]?.sceneKey === 'DriveScene' && <BatteryDisplay />}
+      {isInGame && LEVELS[levelIndex]?.sceneKey === 'DriveScene' && <SplatterOverlay />}
+      {isInGame && LEVELS[levelIndex]?.sceneKey === 'DriveScene' && <WinFade />}
 
       {/* Level complete overlay */}
       {screen === 'LEVEL_COMPLETE' && <LevelComplete />}

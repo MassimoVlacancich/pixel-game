@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { useGameStore } from '../store/useGameStore'
 
-const SEGMENTS = 20
+const SEGMENTS       = 20
+const HIT_TEXT_SIZE  = 100   // px — font size of the +/- battery feedback text
 
 export default function BatteryDisplay() {
   const pct      = useGameStore((s) => s.batteryPct)
@@ -82,15 +83,19 @@ export default function BatteryDisplay() {
         <div
           key={hitEffect.id}
           style={{
-            position: 'absolute',
-            top: 44,
-            right: 12,
-            fontSize: 14,
+            position: 'fixed',
+            top: 120,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            fontSize: HIT_TEXT_SIZE,
+            textAlign: 'center',
             color: hitEffect.color,
             fontFamily: "'Press Start 2P', monospace",
-            textShadow: '2px 2px 0 #000',
+            textShadow: '-4px -4px 0 #000, 4px -4px 0 #000, -4px 4px 0 #000, 4px 4px 0 #000',
             animation: 'floatUp 1.4s ease-out forwards',
             pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+            zIndex: 30,
           }}
         >
           {hitEffect.text}
@@ -99,9 +104,9 @@ export default function BatteryDisplay() {
 
       <style>{`
         @keyframes floatUp {
-          0%   { opacity: 1; transform: translateY(0); }
+          0%   { opacity: 1; transform: translateX(-50%) translateY(0); }
           70%  { opacity: 1; }
-          100% { opacity: 0; transform: translateY(-28px); }
+          100% { opacity: 0; transform: translateX(-50%) translateY(-48px); }
         }
       `}</style>
     </div>

@@ -26,6 +26,9 @@ export interface LevelConfig {
   bgmTrack?: string
 }
 
+// ── Drive level tuning ────────────────────────────────────────────────────────
+const DRIVE_LEVEL_DISTANCE = 1600  // distance units to travel before level completes (higher = longer)
+
 export const LEVELS: LevelConfig[] = [
   {
     id: 'japan_tutorial',
@@ -57,7 +60,7 @@ export const LEVELS: LevelConfig[] = [
     player2Start: [0, 0.5, 0],
     buddyStart: [0, 0.5, 0],
     gravity: [0, -9.81, 0],
-    completion: { type: 'reach_destination', distance: 500 },
+    completion: { type: 'reach_destination', distance: DRIVE_LEVEL_DISTANCE },
     fail: { type: 'battery_dead' },
   },
 ]

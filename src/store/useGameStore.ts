@@ -25,6 +25,8 @@ interface GameStore {
   isTwoPlayer: boolean
   batteryPct: number
   hitEffect: { text: string; color: string; id: number } | null
+  smudgeEffect: { type: 'barrel' | 'snowball'; id: number } | null
+  winFading: boolean
 
   // Actions
   setScreen: (s: Screen) => void
@@ -32,10 +34,14 @@ interface GameStore {
   startLevel: (index: number) => void
   retryLevel: () => void
   completeLevel: (levelId: string) => void
+  recordScore: (levelId: string) => void
   addScore: (delta: number) => void
   setBattery: (n: number) => void
   setHitEffect: (text: string, color: string) => void
   clearHitEffect: () => void
+  setSmudgeEffect: (type: 'barrel' | 'snowball') => void
+  clearSmudgeEffect: () => void
+  setWinFading: (v: boolean) => void
   setPlayer1Character: (id: string) => void
   setPlayer2Character: (id: string | null) => void
   setBuddyCharacter: (id: string | null) => void
@@ -57,19 +63,21 @@ export const useGameStore = create<GameStore>((set, get) => ({
   isTwoPlayer: false,
   batteryPct: 100,
   hitEffect: null,
+  smudgeEffect: null,
+  winFading: false,
 
   setScreen: (screen) => set({ screen }),
   setLevelIndex: (levelIndex) => set({ levelIndex }),
   setBattery: (batteryPct) => set({ batteryPct }),
 
   startLevel: (levelIndex) => {
-    set({ screen: 'LOADING', levelIndex, score: 0 })
+    set({ screen: 'LOADING', levelIndex, score: 0, winFading: false })
     // Transition to PLAYING after a brief tick (lets Suspense show loading screen)
     setTimeout(() => set({ screen: 'PLAYING' }), 50)
   },
 
   retryLevel: () => {
-    set((s) => ({ screen: 'PLAYING', score: 0, levelKey: s.levelKey + 1 }))
+    set((s) => ({ screen: 'PLAYING', score: 0, levelKey: s.levelKey + 1, winFading: false }))
   },
 
   completeLevel: (levelId) => {
@@ -87,11 +95,24 @@ export const useGameStore = create<GameStore>((set, get) => ({
     get().persistSave()
   },
 
+  recordScore: (levelId) => {
+    set((s) => {
+      const bestScores = { ...s.bestScores }
+      if ((bestScores[levelId] ?? 0) < s.score) bestScores[levelId] = s.score
+      return { bestScores }
+    })
+    get().persistSave()
+  },
+
   addScore: (delta) => set((s) => ({ score: s.score + delta })),
 
   setHitEffect: (text, color) =>
     set((s) => ({ hitEffect: { text, color, id: (s.hitEffect?.id ?? 0) + 1 } })),
   clearHitEffect: () => set({ hitEffect: null }),
+  setSmudgeEffect: (type) =>
+    set((s) => ({ smudgeEffect: { type, id: (s.smudgeEffect?.id ?? 0) + 1 } })),
+  clearSmudgeEffect: () => set({ smudgeEffect: null }),
+  setWinFading: (v) => set({ winFading: v }),
 
   setPlayer1Character: (id) => set({ player1CharacterId: id }),
   setPlayer2Character: (id) => set({ player2CharacterId: id }),

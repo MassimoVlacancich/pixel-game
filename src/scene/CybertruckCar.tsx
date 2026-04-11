@@ -2,35 +2,28 @@ import { useMemo } from 'react'
 import { useLoader } from '@react-three/fiber'
 import * as THREE from 'three'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js'
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js'
 
 import modelUrl from '../assets/low-poly/cars/cybertruck/model.obj?url'
+import mtlUrl from '../assets/low-poly/cars/cybertruck/materials.mtl?url'
 
-// Colours from materials.mtl — applied by material name
-const MAT_COLORS: Record<string, string> = {
-  mat21: '#F0F4F8',  // white trim
-  mat15: '#9CAEBB',  // steel-grey body (cybertruck signature)
-  mat23: '#0A0A0A',  // windows / tyre rubber
-  mat8:  '#E80808',  // tail lights
-  mat22: '#484848',  // wheels / underside
-  mat13: '#FF5500',  // orange turn-signal accents
-}
-
-const TARGET_SIZE = 3.6   // target max dimension in world units
-const ROT_X = -0.082      // baked-in orientation (confirmed by user)
-const ROT_Y = -1.902
-const ROT_Z = -0.082
+const TARGET_SIZE = 4.0   // target max dimension in world units
+const ROT_X = -0.05     // baked-in orientation (confirmed by user)
+const ROT_Y = -1.8
+const ROT_Z = -0.00
 const OFFSET_Y = 0.250
 
-function buildMaterials(): Record<string, THREE.MeshToonMaterial> {
-  return Object.fromEntries(
-    Object.entries(MAT_COLORS).map(([name, hex]) => [
-      name,
-      new THREE.MeshToonMaterial({ color: new THREE.Color(hex) }),
-    ])
-  )
-}
+// import modelUrl from '../assets/low-poly/cars/van/model.obj?url'
+// import mtlUrl from '../assets/low-poly/cars/van/materials.mtl?url'
 
-function applyAndNormalise(obj: THREE.Group, mats: Record<string, THREE.MeshToonMaterial>) {
+// const TARGET_SIZE = 2.5   // target max dimension in world units
+// const ROT_X = -0.0     // baked-in orientation (confirmed by user)
+// const ROT_Y = -3.1
+// const ROT_Z = -0.0
+// const OFFSET_Y = 0.0
+
+
+function applyAndNormalise(obj: THREE.Group) {
   // Reset first — safe under React Strict Mode double-invoke
   obj.scale.set(1, 1, 1)
   obj.position.set(0, 0, 0)
@@ -38,8 +31,6 @@ function applyAndNormalise(obj: THREE.Group, mats: Record<string, THREE.MeshToon
 
   obj.traverse((c) => {
     if (!(c instanceof THREE.Mesh)) return
-    const name = (c.material as THREE.Material)?.name ?? ''
-    c.material = mats[name] ?? new THREE.MeshToonMaterial({ color: '#9CAEBB' })
     c.castShadow = true
     c.receiveShadow = true
   })
@@ -60,14 +51,18 @@ interface Props {
 }
 
 export default function CybertruckCar({ speedRef: _speed, wheelAngleRef: _wheel }: Props) {
-  const raw = useLoader(OBJLoader, modelUrl)
-  const mats = useMemo(() => buildMaterials(), [])
+  
+  const materials = useLoader(MTLLoader, mtlUrl)
+  const raw = useLoader(OBJLoader, modelUrl, (loader) => {
+    materials.preload()
+    loader.setMaterials(materials)
+  })
 
   const model = useMemo(() => {
     const clone = raw.clone()
-    applyAndNormalise(clone, mats)
+    applyAndNormalise(clone)
     return clone
-  }, [raw, mats])
+  }, [raw])
 
   return <primitive object={model} />
 }

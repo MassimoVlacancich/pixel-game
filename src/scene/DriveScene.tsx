@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
+import { Text } from '@react-three/drei'
 import * as THREE from 'three'
 import CybertruckCar from './CybertruckCar'
 import RoadTrees from './RoadTrees'
@@ -13,20 +14,26 @@ const gradient = getToonGradient()
 
 const DASH_N = 25
 const DASH_SPACING = 8
-const BASE_SPEED = 12
+const BASE_SPEED = 22   // default coasting speed — raise to make the car faster by default
 const MAX_SPEED = 40
+const LATERAL_BASE        = 3.5   // base lane-change speed
+const LATERAL_SCALE       = 0.12  // extra agility per unit of speed
+const BATTERY_DRAIN_RATE  = 4.5   // % per second at MAX_SPEED (was 9)
 
 function lerp(a: number, b: number, t: number) { return a + (b - a) * t }
 
 function CameraRig({
   carGroupRef,
   carZRef,
+  frozenRef,
 }: {
   carGroupRef: React.RefObject<THREE.Group | null>
   carZRef: React.RefObject<number>
+  frozenRef: React.RefObject<boolean>
 }) {
   const { camera } = useThree()
   useFrame(() => {
+    if (frozenRef.current) return
     const x = carGroupRef.current?.position.x ?? 0
     const z = carZRef.current ?? 0
     camera.position.set(x * 0.3, 2.2, z - 5)
@@ -48,6 +55,16 @@ export default function DriveScene({ config }: LevelSceneProps) {
   const keys = useRef({ up: false, down: false, left: false, right: false })
 
   const carXRef = useRef(0)  // world X for hazard collision
+  const cameraFrozen = useRef(false)
+
+  // Win sequence
+  const winPhase   = useRef<'none' | 'sign_approach' | 'stopped' | 'flyoff' | 'done'>('none')
+  const winTimer   = useRef(0)
+  const signRef    = useRef<THREE.Group>(null)
+  const flySpeed   = useRef(0)
+  const clearHazardsRef = useRef(false)
+  const frozenCamPos = useRef(new THREE.Vector3())
+  const frozenCamLook = useRef(new THREE.Vector3())
 
   const dashZsCenter = useRef(Array.from({ length: DASH_N }, (_, i) => i * DASH_SPACING))
   const dashZsLeft   = useRef(Array.from({ length: DASH_N }, (_, i) => i * DASH_SPACING))
@@ -106,9 +123,50 @@ export default function DriveScene({ config }: LevelSceneProps) {
       isBoost ? `+${delta}%` : `${delta}%`,
       isBoost ? '#44FF88' : '#FF4444'
     )
+    if (type === 'barrel' || type === 'snowball') {
+      store.setSmudgeEffect(type as 'barrel' | 'snowball')
+    }
   }
 
   useFrame((_, delta) => {
+    // ── Win sequence runs independently of gameEnded guard ───────────────────
+    if (winPhase.current !== 'none') {
+      winTimer.current += delta
+
+      if (winPhase.current === 'sign_approach') {
+        speed.current = 0
+        const t = Math.min(1, winTimer.current / 3)
+        if (signRef.current) signRef.current.position.z = 150 - (150 - 18) * t
+        if (winTimer.current >= 3) {
+          winPhase.current = 'stopped'
+          winTimer.current = 0
+        }
+      } else if (winPhase.current === 'stopped') {
+        speed.current = 0
+        if (winTimer.current >= 2) {
+          winPhase.current = 'flyoff'
+          winTimer.current = 0
+          cameraFrozen.current = true
+          flySpeed.current = 0
+        }
+      } else if (winPhase.current === 'flyoff') {
+        flySpeed.current = Math.min(80, flySpeed.current + 40 * delta)
+        if (carGroup.current) {
+          carGroup.current.position.z += flySpeed.current * delta
+          const shrink = Math.max(0.05, 1 - flySpeed.current / 100)
+          carGroup.current.scale.setScalar(shrink)
+        }
+        if (winTimer.current >= 1) {
+          useGameStore.getState().setWinFading(true)
+        }
+        if (winTimer.current >= 4) {
+          winPhase.current = 'done'
+          useGameStore.getState().completeLevel(config.id)
+        }
+      }
+      return
+    }
+
     if (gameEnded.current) return
     const screen = useGameStore.getState().screen
     if (screen !== 'PLAYING') return
@@ -130,14 +188,14 @@ export default function DriveScene({ config }: LevelSceneProps) {
 
     const stickX = gp?.axes[0] ?? 0
     const kDir = (keys.current.right ? 1 : 0) - (keys.current.left ? 1 : 0)
-    lanePos.current -= (stickX + kDir) * 3.5 * delta
-    lanePos.current = Math.max(-1, Math.min(1, lanePos.current))
+    lanePos.current -= (stickX + kDir) * (LATERAL_BASE + speed.current * LATERAL_SCALE) * delta
+    lanePos.current = Math.max(-1.05, Math.min(1.05, lanePos.current))
 
     // Car Z: lerp toward position based on speed (slow = near camera, fast = forward)
     const targetZ = lerp(-1.5, 3.5, speed.current / MAX_SPEED)
     carZRef.current += (targetZ - carZRef.current) * 4.0 * delta
 
-    battery.current -= (speed.current / MAX_SPEED) * 9 * delta
+    battery.current -= (speed.current / MAX_SPEED) * BATTERY_DRAIN_RATE * delta
     battery.current = Math.max(0, battery.current)
     totalDist.current += speed.current * delta
     wheelAngleRef.current = lanePos.current * 20
@@ -172,14 +230,19 @@ export default function DriveScene({ config }: LevelSceneProps) {
 
     if (battery.current <= 0) {
       gameEnded.current = true
+      useGameStore.getState().recordScore(config.id)
       useGameStore.getState().setScreen('GAME_OVER')
       return
     }
 
     const completion = config.completion
-    if (completion.type === 'reach_destination' && totalDist.current >= completion.distance) {
+    if (completion.type === 'reach_destination' && totalDist.current >= completion.distance && winPhase.current === 'none') {
       gameEnded.current = true
-      useGameStore.getState().completeLevel(config.id)
+      winPhase.current = 'sign_approach'
+      winTimer.current = 0
+      clearHazardsRef.current = true
+      speed.current = 0
+      if (signRef.current) signRef.current.position.set(0, 0, 150)
     }
   })
 
@@ -196,7 +259,7 @@ export default function DriveScene({ config }: LevelSceneProps) {
       />
       <hemisphereLight args={['#B0CCE8', '#AACCAA', 0.3]} />
 
-      <CameraRig carGroupRef={carGroup} carZRef={carZRef} />
+      <CameraRig carGroupRef={carGroup} carZRef={carZRef} frozenRef={cameraFrozen} />
 
       {/* Ground — snow white */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 490]} receiveShadow>
@@ -273,7 +336,52 @@ export default function DriveScene({ config }: LevelSceneProps) {
         carXRef={carXRef}
         carZRef={carZRef}
         onHit={handleHit}
+        clearSignal={clearHazardsRef}
       />
+
+      {/* Highway sign — hidden until win sequence (moved to [0,0,150] when triggered) */}
+      {/* rotation Y=PI so front face (-Z local) faces the camera approaching from -Z world */}
+      <group ref={signRef} position={[0, -200, 0]} rotation={[0, Math.PI, 0]}>
+        {/* Left post */}
+        <mesh position={[-6, 3, 0]}>
+          <cylinderGeometry args={[0.12, 0.12, 6, 8]} />
+          <meshToonMaterial color="#888888" gradientMap={gradient} />
+        </mesh>
+        {/* Right post */}
+        <mesh position={[6, 3, 0]}>
+          <cylinderGeometry args={[0.12, 0.12, 6, 8]} />
+          <meshToonMaterial color="#888888" gradientMap={gradient} />
+        </mesh>
+        {/* Top crossbeam — pushed behind sign board */}
+        <mesh position={[0, 6.06, -0.2]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.12, 0.12, 12, 8]} />
+          <meshToonMaterial color="#888888" gradientMap={gradient} />
+        </mesh>
+        {/* White border — meshBasicMaterial guarantees true colour under any lighting */}
+        <mesh position={[0, 5.8, -0.1]}>
+          <boxGeometry args={[10.5, 2.9, 0.06]} />
+          <meshBasicMaterial color="#FFFFFF" />
+        </mesh>
+        {/* Blue sign board */}
+        <mesh position={[0, 5.8, 0]}>
+          <boxGeometry args={[10, 2.5, 0.12]} />
+          <meshBasicMaterial color="#1A5FB4" />
+        </mesh>
+        {/* Sign text */}
+        <Text
+          position={[0, 5.8, 0.1]}
+          font="/fonts/PressStart2P-Regular.ttf"
+          fontSize={0.76}
+          color="#FFFFFF"
+          anchorX="center"
+          anchorY="middle"
+          letterSpacing={0.05}
+          maxWidth={9}
+          textAlign="center"
+        >
+          WELCOME TO THE LAKES
+        </Text>
+      </group>
 
       {/* Car — rotation.y=PI so rear faces camera */}
       <group ref={carGroup} position={[0, 0, 0]} rotation={[0, Math.PI, 0]}>

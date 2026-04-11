@@ -3,7 +3,8 @@
     "allow": [
       "Bash(git branch:*)",
       "Bash(git rebase:*)",
-      "Bash(xargs basename:*)"
+      "Bash(xargs basename:*)",
+      "Bash(node -e \"require\\('three/addons/loaders/OBJLoader.js'\\)\")"
     ],
     "additionalDirectories": [
       "d:\\Users\\massi\\Documents\\Projects\\pixel-game"

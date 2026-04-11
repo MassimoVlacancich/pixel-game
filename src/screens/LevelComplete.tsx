@@ -10,8 +10,9 @@ export default function LevelComplete() {
 
   return (
     <PixelOverlayMenu
-      subtitle="Level Complete"
-      title={level?.name ?? ''}
+      subtitle="You drove the EV all the way to the Lakes!"
+      subtitleStyle={{ fontSize: 30, letterSpacing: 2, color: '#3AE880', lineHeight: 1.5 }}
+      title="Time for some cake..."
       info={[
         { label: 'Score', value: score },
         { label: 'Best',  value: best  },

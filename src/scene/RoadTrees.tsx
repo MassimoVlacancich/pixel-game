@@ -52,7 +52,7 @@ const POOL_FENCE      = FENCE_GROUPS * MAX_PER_GROUP  // total clones per side
 // ── Target heights (baked in — no debug multipliers) ─────────────────────────
 const TREE_H  = 10.8
 const FENCE_H = 2.88   // 1.8 × 1.6
-const HILL_H  = 25.0   // 5.0 × 5
+const HILL_H  = 50.0   // 5.0 × 5
 
 // ── Winter cityscape background ───────────────────────────────────────────────
 function srand(seed: number) {
@@ -311,8 +311,8 @@ export default function RoadTrees({ speedRef }: RoadTreesProps) {
   const x_r2R = useRef(Float32Array.from({ length: POOL_TREE  }, (_, i) =>   15.5 + (i * 13 % 36) / 10))
   const fGrpXL = useRef(Float32Array.from({ length: FENCE_GROUPS }, (_, g) => -(8.6 + (g * 3 % 12) / 10)))
   const fGrpXR = useRef(Float32Array.from({ length: FENCE_GROUPS }, (_, g) =>  8.6 + (g * 3 % 12) / 10))
-  const x_hL  = useRef(Float32Array.from({ length: POOL_HILL  }, (_, i) => -(23   + (i * 17 % 80) / 10)))
-  const x_hR  = useRef(Float32Array.from({ length: POOL_HILL  }, (_, i) =>   23   + (i * 17 % 80) / 10))
+  const x_hL  = useRef(Float32Array.from({ length: POOL_HILL  }, (_, i) => -(38   + (i * 17 % 80) / 10)))
+  const x_hR  = useRef(Float32Array.from({ length: POOL_HILL  }, (_, i) =>   38   + (i * 17 % 80) / 10))
 
   // ── Rocks InstancedMesh ───────────────────────────────────────────────────
   const rockRef  = useRef<THREE.InstancedMesh>(null)
@@ -378,8 +378,8 @@ export default function RoadTrees({ speedRef }: RoadTreesProps) {
     tick(r1RRefs, z_r1R, x_r1R, POOL_TREE, TREE_RESET, 2.5, 10.5,  1)
     tick(r2LRefs, z_r2L, x_r2L, POOL_TREE, TREE_RESET, 3.5, 15.5, -1)
     tick(r2RRefs, z_r2R, x_r2R, POOL_TREE, TREE_RESET, 3.5, 15.5,  1)
-    tick(hLRefs,  z_hL,  x_hL,  POOL_HILL, HILL_RESET, 7.0, 23.0, -1)
-    tick(hRRefs,  z_hR,  x_hR,  POOL_HILL, HILL_RESET, 7.0, 23.0,  1)
+    tick(hLRefs,  z_hL,  x_hL,  POOL_HILL, HILL_RESET, 7.0, 38.0, -1)
+    tick(hRRefs,  z_hR,  x_hR,  POOL_HILL, HILL_RESET, 7.0, 38.0,  1)
 
     tickFences(fLRefs, fGrpZL, fGrpXL, fGrpCntL, -1)
     tickFences(fRRefs, fGrpZR, fGrpXR, fGrpCntR,  1)
@@ -430,11 +430,11 @@ export default function RoadTrees({ speedRef }: RoadTreesProps) {
   return (
     <>
       {/* Far background winter cityscape */}
-      <mesh position={[-38, 8, 200]} rotation={[0, Math.PI / 2, 0]}>
+      <mesh position={[-55, 14, 260]} rotation={[0, Math.PI / 2, 0]}>
         <planeGeometry args={[420, 18]} />
         <meshBasicMaterial map={texL} />
       </mesh>
-      <mesh position={[38, 8, 200]} rotation={[0, -Math.PI / 2, 0]}>
+      <mesh position={[55, 14, 260]} rotation={[0, -Math.PI / 2, 0]}>
         <planeGeometry args={[420, 18]} />
         <meshBasicMaterial map={texR} />
       </mesh>
