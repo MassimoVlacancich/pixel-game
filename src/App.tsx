@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber'
-import { Suspense, useRef, useEffect, lazy } from 'react'
+import { Suspense, useRef, useEffect, useState, lazy } from 'react'
 
 // Dev tool — tree-shaken in production when ?tool= is never set
 const SceneBuilder = lazy(() => import('./tools/sceneBuilder/SceneBuilder'))
@@ -47,7 +47,8 @@ export default function App() {
   useEffect(() => { loadSave() }, [loadSave])
   useEffect(() => { wrapperRef.current?.focus() }, [])
 
-  const isInGame = screen === 'PLAYING' || screen === 'PAUSED' || screen === 'GAME_OVER' || screen === 'LEVEL_COMPLETE'
+  const gameEndFading = useGameStore((s) => s.gameEndFading)
+  const isInGame = screen === 'PLAYING' || screen === 'PAUSED' || screen === 'GAME_OVER' || screen === 'LEVEL_COMPLETE' || screen === 'CINEMATIC'
 
   return (
     <div
@@ -117,6 +118,53 @@ export default function App() {
 
       {/* Level complete overlay */}
       {screen === 'LEVEL_COMPLETE' && <LevelComplete />}
+
+      {/* Ending cinematic fade — black overlay that fades in then out over the main menu */}
+      {gameEndFading && <EndingFade />}
     </div>
+  )
+}
+
+// ── Ending fade overlay ───────────────────────────────────────────────────────
+// Phase 1: opacity 0 → 1 over 1.5 s (fade to black, then switch to MAIN_MENU)
+// Phase 2: opacity 1 → 0 over 1 s   (reveal main menu background)
+function EndingFade() {
+  const [opacity, setOpacity] = useState(0)
+  const [phase, setPhase] = useState<'in' | 'out'>('in')
+  const setScreen = useGameStore((s) => s.setScreen)
+  const setGameEndFading = useGameStore((s) => s.setGameEndFading)
+
+  // Trigger fade-in on mount
+  useEffect(() => {
+    // rAF so the browser paints opacity:0 first, then the transition fires
+    const id = requestAnimationFrame(() => setOpacity(1))
+    return () => cancelAnimationFrame(id)
+  }, [])
+
+  const onTransitionEnd = () => {
+    if (phase === 'in') {
+      // Fully black — switch to main menu, then fade out
+      setScreen('MAIN_MENU')
+      setPhase('out')
+      requestAnimationFrame(() => setOpacity(0))
+    } else {
+      // Fully transparent — done
+      setGameEndFading(false)
+    }
+  }
+
+  return (
+    <div
+      onTransitionEnd={onTransitionEnd}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: '#000',
+        opacity,
+        transition: phase === 'in' ? 'opacity 1.5s ease-in' : 'opacity 1s ease-out',
+        pointerEvents: 'none',
+        zIndex: 9999,
+      }}
+    />
   )
 }

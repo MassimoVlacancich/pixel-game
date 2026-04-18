@@ -7,4 +7,5 @@ export const SCENE_MAP: Record<string, React.LazyExoticComponent<React.Component
   DriveScene:   lazy(() => import('../scene/DriveScene')),
   KitchenScene: lazy(() => import('../scene/KitchenScene')),
   BarScene:     lazy(() => import('../scene/BarScene')),
+  HikeScene:    lazy(() => import('../scene/HikeScene')),
 }

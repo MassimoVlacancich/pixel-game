@@ -101,4 +101,19 @@ export const LEVELS: LevelConfig[] = [
     winSubtitle: 'What a pub crawl!',
     winTitle: 'Cheers!',
   },
+  {
+    id: 'mountain_hike',
+    index: 4,
+    name: 'The Hike',
+    sceneKey: 'HikeScene',
+    player1Start: [-5, 8, 55],
+    player2Start: [5, 8, 55],
+    buddyStart:   [0, 8, 50],
+    gravity: [0, -35, 0],
+    completion: { type: 'score_target', target: 999 }, // manual — triggered by sit interaction in HikeScene
+    fail: { type: 'fall_off', threshold: -30 },
+    winSubtitle: 'What a view.',
+    winTitle: 'THE HIKE',
+    hideScoreDisplay: true,
+  },
 ]

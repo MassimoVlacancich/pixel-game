@@ -11,6 +11,10 @@ interface ThirdPersonCameraProps {
   initialRadius?: number
   /** Initial vertical angle in radians — 0 = horizon, π/2 = top-down (default ~0.719 = 41°) */
   initialElevation?: number
+  /** When true, pressing X (keyboard) or gamepad button 2 (X/Square) toggles first-person mode */
+  allowFirstPerson?: boolean
+  /** When true, all camera updates are skipped — used during cinematic sequences */
+  disabled?: boolean
 }
 
 const DEFAULT_OFFSET = new THREE.Vector3(0, 14, -16)
@@ -34,6 +38,8 @@ export default function ThirdPersonCamera({
   orbitAngleRef,
   initialRadius    = TOTAL_RADIUS,
   initialElevation = DEFAULT_ELEVATION,
+  allowFirstPerson = false,
+  disabled = false,
 }: ThirdPersonCameraProps) {
   const { camera } = useThree()
   const smoothPos = useRef(new THREE.Vector3())
@@ -44,8 +50,12 @@ export default function ThirdPersonCamera({
   const lastPointerY = useRef(0)
   const elevation = useRef(initialElevation)
   const radius = useRef(initialRadius)
+  // First-person state — ref (not state) to avoid re-render on toggle
+  const isFPS = useRef(false)
+  const prevXBtn = useRef(false)
 
   // Backtick toggles mouse-drag orbit mode; resets angles on exit
+  // X key toggles first-person (when allowFirstPerson is true)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.code === 'Backquote') {
@@ -55,6 +65,10 @@ export default function ThirdPersonCamera({
           elevation.current = initialElevation
           radius.current = initialRadius
         }
+      }
+
+      if (allowFirstPerson && e.code === 'KeyX') {
+        isFPS.current = !isFPS.current
       }
 
       // L key: log current camera values to console for tuning
@@ -119,6 +133,7 @@ export default function ThirdPersonCamera({
   }, [orbitAngleRef])
 
   useFrame((_, delta) => {
+    if (disabled) return
     const t = target.current
     if (!t) return
 
@@ -132,24 +147,44 @@ export default function ThirdPersonCamera({
       elevation.current = Math.max(MIN_ELEVATION, Math.min(MAX_ELEVATION,
         elevation.current + ry * 1.5 * delta
       ))
+
+      // Gamepad button 2 (X on Xbox / Square on PlayStation) — edge-detect toggle
+      if (allowFirstPerson) {
+        const xBtn = gp.buttons[2]?.pressed ?? false
+        if (xBtn && !prevXBtn.current) isFPS.current = !isFPS.current
+        prevXBtn.current = xBtn
+      }
     }
 
     const az = orbitAngleRef?.current ?? 0
     const el = elevation.current
     const r  = radius.current
 
-    // Spherical coordinates → world offset
-    const desired = new THREE.Vector3(
-      t.position.x + Math.sin(az) * r * Math.cos(el),
-      t.position.y + r * Math.sin(el),
-      t.position.z - Math.cos(az) * r * Math.cos(el),
-    )
+    if (isFPS.current) {
+      // ── First-person mode ──────────────────────────────────────────────────
+      const eye = new THREE.Vector3(t.position.x, t.position.y + 1.6, t.position.z)
+      camera.position.copy(eye)
+      // Look direction driven by az/el (right stick or mouse-drag)
+      const lookDir = new THREE.Vector3(
+        Math.sin(az) * 10,
+        Math.sin(el * 0.5) * 5,
+        -Math.cos(az) * 10,
+      )
+      camera.lookAt(eye.clone().add(lookDir))
+    } else {
+      // ── Third-person mode (unchanged) ─────────────────────────────────────
+      const desired = new THREE.Vector3(
+        t.position.x + Math.sin(az) * r * Math.cos(el),
+        t.position.y + r * Math.sin(el),
+        t.position.z - Math.cos(az) * r * Math.cos(el),
+      )
 
-    smoothPos.current.lerp(desired, 0.12)
-    camera.position.copy(smoothPos.current)
+      smoothPos.current.lerp(desired, 0.12)
+      camera.position.copy(smoothPos.current)
 
-    lookTarget.current.set(t.position.x, t.position.y + 0.5, t.position.z)
-    camera.lookAt(lookTarget.current)
+      lookTarget.current.set(t.position.x, t.position.y + 0.5, t.position.z)
+      camera.lookAt(lookTarget.current)
+    }
   })
 
   return null

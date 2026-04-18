@@ -161,6 +161,7 @@ export default function JapanScene({ config, characterRef, joystickDir, jumpRef 
           <Character
             config={p2Config}
             startPosition={config.player2Start}
+            cameraAngle={orbitAngle}
             playerIndex={1}
           />
         )}

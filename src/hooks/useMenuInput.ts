@@ -41,6 +41,10 @@ export function useMenuInput(playerIndex: 0 | 1, onInput: InputCallback) {
   const prevKb = useRef<Record<string, boolean>>({})
   const rafRef = useRef<number>(0)
 
+  // Guard: require confirm to be released before it can fire.
+  // Prevents input bleed when the confirm key that opened this screen is still held.
+  const needsRelease = useRef(true)
+
   // Keyboard state
   const kbDown = useRef<Set<string>>(new Set())
 
@@ -111,6 +115,17 @@ export function useMenuInput(playerIndex: 0 | 1, onInput: InputCallback) {
         prevGp.current['axisR'] = rightDown
         prevGp.current['axisU'] = upDown
         prevGp.current['axisD'] = downDown
+      }
+
+      // Require confirm to be released once before it can fire (prevents input bleed
+      // from the keypress that opened this screen still being held on mount).
+      if (needsRelease.current) {
+        const confirmHeld =
+          kbDown.current.has('Enter') || kbDown.current.has('Space') ||
+          kbDown.current.has('KeyN') ||
+          (gp?.buttons[0]?.pressed ?? false)
+        if (!confirmHeld) needsRelease.current = false
+        input.confirm = false
       }
 
       // Fire callback if any input fired

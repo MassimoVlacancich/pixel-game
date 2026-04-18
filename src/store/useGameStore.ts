@@ -11,6 +11,7 @@ export type Screen =
   | 'PAUSED'
   | 'LEVEL_COMPLETE'
   | 'GAME_OVER'
+  | 'CINEMATIC'
 
 interface GameStore {
   screen: Screen
@@ -29,6 +30,7 @@ interface GameStore {
   hitEffect: { text: string; color: string; id: number } | null
   smudgeEffect: { type: 'barrel' | 'snowball'; id: number } | null
   winFading: boolean
+  gameEndFading: boolean
 
   // Actions
   setScreen: (s: Screen) => void
@@ -44,6 +46,7 @@ interface GameStore {
   setSmudgeEffect: (type: 'barrel' | 'snowball') => void
   clearSmudgeEffect: () => void
   setWinFading: (v: boolean) => void
+  setGameEndFading: (v: boolean) => void
   setPlayer1Character: (id: string) => void
   setPlayer2Character: (id: string | null) => void
   setBuddyCharacter: (id: string | null) => void
@@ -69,6 +72,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   hitEffect: null,
   smudgeEffect: null,
   winFading: false,
+  gameEndFading: false,
 
   setScreen: (screen) => set({ screen }),
   setLevelIndex: (levelIndex) => set({ levelIndex }),
@@ -117,6 +121,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set((s) => ({ smudgeEffect: { type, id: (s.smudgeEffect?.id ?? 0) + 1 } })),
   clearSmudgeEffect: () => set({ smudgeEffect: null }),
   setWinFading: (v) => set({ winFading: v }),
+  setGameEndFading: (v) => set({ gameEndFading: v }),
 
   setPlayer1Character: (id) => set({ player1CharacterId: id }),
   setPlayer2Character: (id) => set({ player2CharacterId: id }),
