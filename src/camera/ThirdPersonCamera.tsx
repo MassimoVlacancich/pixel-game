@@ -34,7 +34,7 @@ function dz(v: number, threshold = 0.15): number {
 
 export default function ThirdPersonCamera({
   target,
-  offset = DEFAULT_OFFSET,
+  offset: _offset = DEFAULT_OFFSET,
   orbitAngleRef,
   initialRadius    = TOTAL_RADIUS,
   initialElevation = DEFAULT_ELEVATION,

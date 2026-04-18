@@ -40,7 +40,8 @@ export default function BuddyCharacter({ config, startPosition = [0, 0.95, -5], 
   const [sx, sy, sz] = startPosition
   return (
     <>
-      <RigidBody ref={bodyRef} type="kinematicPosition" colliders={false} position={[sx, sy, sz]}>
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      <RigidBody ref={bodyRef as any} type="kinematicPosition" colliders={false} position={[sx, sy, sz]}>
         <CapsuleCollider args={[0.6, 0.35]} />
       </RigidBody>
       {/* Scale buddies to ~waist height. scale(0.55) shrinks everything;

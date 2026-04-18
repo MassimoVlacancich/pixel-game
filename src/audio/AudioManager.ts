@@ -49,8 +49,9 @@ function getBGM(track: string): Howl {
 export function playBGM(track: string): void {
   if (currentBgmTrack === track) return
   if (currentBgmTrack && bgmMap[currentBgmTrack]) {
-    bgmMap[currentBgmTrack].fade(bgmMap[currentBgmTrack].volume(), 0, 800)
-    bgmMap[currentBgmTrack].once('fade', () => bgmMap[currentBgmTrack]?.stop())
+    const prev = bgmMap[currentBgmTrack]
+    prev.fade(prev.volume(), 0, 800)
+    prev.once('fade', () => prev.stop())
   }
   currentBgmTrack = track
   getBGM(track).play()
