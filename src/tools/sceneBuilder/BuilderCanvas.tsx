@@ -639,33 +639,6 @@ function TerrainMesh({ terrain, terrainLiveRefs, selected, sculpting, onClick }:
   )
 }
 
-// ── Mouse-button controller — applies button assignments imperatively ─────────
-// drei's OrbitControls only reads `mouseButtons` on mount; prop changes after
-// that are silently ignored. We use the ref to update the THREE.js instance
-// directly whenever paintMode / cameraLock change.
-
-interface MouseButtonsControllerProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  orbitRef: React.RefObject<any>
-  paintMode: boolean
-  cameraLock: boolean
-}
-
-const _MouseButtonsController = ({ orbitRef, paintMode, cameraLock }: MouseButtonsControllerProps) => {
-  useEffect(() => {
-    const ctrl = orbitRef.current
-    if (!ctrl) return
-    if (paintMode && cameraLock) {
-      // CAM sub-mode: left = pan (navigate), right = orbit
-      ctrl.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE }
-    } else {
-      // Normal / paint-only mode: left = orbit, right = pan (Three.js defaults)
-      ctrl.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN }
-    }
-  }, [orbitRef, paintMode, cameraLock])
-
-  return null
-}
 
 // ── Dolly controller — scroll moves camera+target together ───────────────────
 // Replaces OrbitControls' built-in zoom. By translating both camera and target
