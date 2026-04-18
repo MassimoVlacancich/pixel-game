@@ -354,7 +354,7 @@ export default function BarScene({ config, characterRef, joystickDir, jumpRef }:
           intensity={ambientData.directionalIntensity}
         />
       )}
-      {(barSceneData.lights as { id: string; position: [number,number,number]; color: string; intensity: number; distance: number }[]).map(l => (
+      {(barSceneData.lights as unknown as { id: string; position: [number,number,number]; color: string; intensity: number; distance: number }[]).map(l => (
         <pointLight
           key={l.id}
           position={l.position}

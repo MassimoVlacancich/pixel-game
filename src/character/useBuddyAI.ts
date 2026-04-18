@@ -7,10 +7,8 @@ import type { CharacterRef } from './Character'
 
 const SPEED = 5.6        // 80% of player speed (7)
 const FOLLOW_DIST = 3    // start following when farther than this
-const MIN_DIST = 1.8     // stop when closer than this
 const TELEPORT_DIST = 15 // teleport if too far (unstuck)
 const GRAVITY = 35
-const JUMP_VEL = Math.sqrt(2 * GRAVITY * 2)
 
 interface KCC {
   setMaxSlopeClimbAngle(a: number): void

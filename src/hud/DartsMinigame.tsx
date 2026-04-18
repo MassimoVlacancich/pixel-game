@@ -71,7 +71,7 @@ export default function DartsMinigame({ onClose, onWin, p1Name, p2Name }: Props)
   // ── React state (drives render) ──────────────────────────────────────────
   const [scores,     setScores]     = useState<[number, number]>([INIT_SCORE, INIT_SCORE])
   const [current,    setCurrent]    = useState<0 | 1>(0)
-  const [throwsTurn, setThrowsTurn] = useState(0)                     // 0-2
+  const [, setThrowsTurn] = useState(0)                               // 0-2
   const [turnSlots,  setTurnSlots]  = useState<(number | null)[]>([null, null, null])
   const [darts,      setDarts]      = useState<Dart[]>([])   // full history (scoreboard RECENT)
   const [handDarts,  setHandDarts]  = useState<Dart[]>([])   // current hand only (board dots)

@@ -651,7 +651,7 @@ interface MouseButtonsControllerProps {
   cameraLock: boolean
 }
 
-function _MouseButtonsController({ orbitRef, paintMode, cameraLock }: MouseButtonsControllerProps) {
+const _MouseButtonsController = ({ orbitRef, paintMode, cameraLock }: MouseButtonsControllerProps) => {
   useEffect(() => {
     const ctrl = orbitRef.current
     if (!ctrl) return

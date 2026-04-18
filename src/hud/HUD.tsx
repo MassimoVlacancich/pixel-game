@@ -24,7 +24,7 @@ export default function HUD({ joystickNode, jumpButtonNode }: HUDProps) {
   const levelIndex = useGameStore((s) => s.levelIndex)
   const level = LEVELS[levelIndex]
 
-  const isPlaying = (screen === 'PLAYING' || screen === 'PAUSED') && screen !== 'CINEMATIC'
+  const isPlaying = screen === 'PLAYING' || screen === 'PAUSED'
 
   // ── Global pause toggle: Escape key + gamepad Start button (button 9) ──────
   useEffect(() => {

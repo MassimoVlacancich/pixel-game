@@ -107,7 +107,7 @@ export default function ShuffleboardMinigame({ onClose, onWin, p1Name, p2Name }:
   const [round,          setRound]          = useState(1)
   const [pucks,          setPucks]          = useState<Puck[]>([])
   const [barLevel,       setBarLevel]       = useState(0)
-  const [barGoingUp,     setBarGoingUp]     = useState(true)
+  const [, setBarGoingUp] = useState(true)
   const [aimOffset,      setAimOffset]      = useState(0)
   const [lockedStrength, setLockedStrength] = useState<number | null>(null)
   const [betweenMsg,     setBetweenMsg]     = useState('')

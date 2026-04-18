@@ -80,8 +80,9 @@ const Character = forwardRef<CharacterRef, CharacterProps>((
   const [sx, sy, sz] = startPosition
   return (
     <>
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <RigidBody
-        ref={bodyRef}
+        ref={bodyRef as any}
         type="kinematicPosition"
         colliders={false}
         position={[sx, sy, sz]}
