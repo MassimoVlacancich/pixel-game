@@ -20,11 +20,13 @@ export interface PixelInfoRow {
 interface Props {
   title: string
   subtitle?: string
+  subtitleStyle?: React.CSSProperties
   info?: PixelInfoRow[]
   items: PixelMenuItem[]
+  children?: React.ReactNode
 }
 
-export default function PixelOverlayMenu({ title, subtitle, info, items }: Props) {
+export default function PixelOverlayMenu({ title, subtitle, subtitleStyle, info, items, children }: Props) {
   const [cursor, setCursor] = useState(0)
 
   useMenuInput(0, (input) => {
@@ -58,6 +60,7 @@ export default function PixelOverlayMenu({ title, subtitle, info, items }: Props
             fontSize: 9, letterSpacing: 4, color: px.green,
             textShadow: TEXT_OUTLINE_SM,
             marginBottom: 12,
+            ...subtitleStyle,
           }}>{subtitle.toUpperCase()}</p>
         )}
 
@@ -68,6 +71,9 @@ export default function PixelOverlayMenu({ title, subtitle, info, items }: Props
           marginBottom: info && info.length ? 32 : 48,
           lineHeight: 1.4,
         }}>{title.toUpperCase()}</h1>
+
+        {/* Custom content slot (pineapples, etc.) */}
+        {children}
 
         {/* Info rows (score, best, etc.) */}
         {info && info.length > 0 && (

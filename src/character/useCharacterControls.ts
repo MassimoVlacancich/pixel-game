@@ -75,7 +75,7 @@ export function useCharacterControls(
 
     // Gate all input when paused
     const screen = useGameStore.getState().screen
-    if (screen === 'PAUSED' || screen === 'GAME_OVER' || screen === 'LEVEL_COMPLETE') return
+    if (screen === 'PAUSED' || screen === 'GAME_OVER' || screen === 'LEVEL_COMPLETE' || screen === 'CINEMATIC') return
 
     // Use grounded state from end of last frame
     const isGrounded = isGroundedRef.current

@@ -3,6 +3,7 @@ export interface SaveData {
   unlockedLevels: number[]
   bestScores: Record<string, number>  // levelId → score
   player1CharacterId: string
+  selectedCarId: string
   lastPlayedLevelIndex: number
 }
 
@@ -11,5 +12,6 @@ export const DEFAULT_SAVE: SaveData = {
   unlockedLevels: [0],
   bestScores: {},
   player1CharacterId: 'aoi',
+  selectedCarId: 'cybertruck',
   lastPlayedLevelIndex: 0,
 }

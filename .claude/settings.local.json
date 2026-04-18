@@ -15,7 +15,16 @@
       "Bash(gh --version)",
       "Bash(gh auth:*)",
       "Read(//c/Program Files/GitHub CLI//**)",
-      "Read(//c/Program Files \\(x86\\)/**)"
+      "Read(//c/Program Files \\(x86\\)/**)",
+      "Bash(grep -E '\\\\.\\(dae|dxf|obj|mtl|png|jpg|jpeg\\)$')",
+      "Bash(grep -oE '\\\\.[^.]+$')",
+      "Read(//d/Users/massi/.claude/projects/**)",
+      "Read(//c/Users/massi/.claude/projects/d--Users-massi-Documents-Projects-pixel-game/**)",
+      "Bash(python3)",
+      "Bash(grep -o 'collider:box[^\\\\\\\\]*' \"C:/Users/massi/.claude/projects/d--Users-massi-Documents-Projects-pixel-game/9070a06a-e8c1-4487-afb2-521a0d86122a.jsonl\")",
+      "Bash(grep -o '\"text\":\"[^\"]*\\\\\\\\/low-poly[^\"]*\"')",
+      "Bash(wsl python3:*)",
+      "Bash(node --input-type=module --eval \"import\\('./src/scene/KitchenScene.tsx'\\)\")"
     ]
   }
 }

@@ -18,10 +18,16 @@ interface CharacterProps {
   cameraAngle?: React.MutableRefObject<number>
   jumpRef?: React.MutableRefObject<boolean>
   playerIndex?: 0 | 1
+  /** When true the arms animate to a raised forward position (~70°) */
+  holdingItemRef?: React.MutableRefObject<boolean>
+  /** Rendered inside the visual group — use for held items that follow the character */
+  children?: React.ReactNode
 }
 
+const HOLD_ANGLE = -(70 * THREE.MathUtils.DEG2RAD)  // arms raised 70° forward
+
 const Character = forwardRef<CharacterRef, CharacterProps>((
-  { config, startPosition = [0, 0.95, -5], joystickDir, cameraAngle, jumpRef, playerIndex = 0 },
+  { config, startPosition = [0, 0.95, -5], joystickDir, cameraAngle, jumpRef, playerIndex = 0, holdingItemRef, children },
   ref,
 ) => {
   const cfg = config ?? CHARACTERS[0]
@@ -49,12 +55,20 @@ const Character = forwardRef<CharacterRef, CharacterProps>((
 
     const s = Math.sin(walkTime.current) * swingAmp.current
 
+    const holding = holdingItemRef?.current ?? false
+
     if (jumpState !== 'grounded') {
       const t = 0.12
       if (legLRef.current) { legLRef.current.rotation.x = THREE.MathUtils.lerp(legLRef.current.rotation.x, 0.65, t); legLRef.current.rotation.z = THREE.MathUtils.lerp(legLRef.current.rotation.z, -0.25, t) }
       if (legRRef.current) { legRRef.current.rotation.x = THREE.MathUtils.lerp(legRRef.current.rotation.x, 0.65, t); legRRef.current.rotation.z = THREE.MathUtils.lerp(legRRef.current.rotation.z,  0.25, t) }
       if (armLRef.current) { armLRef.current.rotation.x = THREE.MathUtils.lerp(armLRef.current.rotation.x, -0.6, t); armLRef.current.rotation.z = THREE.MathUtils.lerp(armLRef.current.rotation.z,  0.2, t) }
       if (armRRef.current) { armRRef.current.rotation.x = THREE.MathUtils.lerp(armRRef.current.rotation.x, -0.6, t); armRRef.current.rotation.z = THREE.MathUtils.lerp(armRRef.current.rotation.z, -0.2, t) }
+    } else if (holding) {
+      const t = 0.18
+      if (armLRef.current) { armLRef.current.rotation.x = THREE.MathUtils.lerp(armLRef.current.rotation.x, HOLD_ANGLE, t); armLRef.current.rotation.z = THREE.MathUtils.lerp(armLRef.current.rotation.z, 0, t) }
+      if (armRRef.current) { armRRef.current.rotation.x = THREE.MathUtils.lerp(armRRef.current.rotation.x, HOLD_ANGLE, t); armRRef.current.rotation.z = THREE.MathUtils.lerp(armRRef.current.rotation.z, 0, t) }
+      if (legLRef.current) { legLRef.current.rotation.x = s;  legLRef.current.rotation.z = 0 }
+      if (legRRef.current) { legRRef.current.rotation.x = -s; legRRef.current.rotation.z = 0 }
     } else {
       if (legLRef.current) { legLRef.current.rotation.x = s;        legLRef.current.rotation.z = 0 }
       if (legRRef.current) { legRRef.current.rotation.x = -s;       legRRef.current.rotation.z = 0 }
@@ -66,7 +80,13 @@ const Character = forwardRef<CharacterRef, CharacterProps>((
   const [sx, sy, sz] = startPosition
   return (
     <>
-      <RigidBody ref={bodyRef} type="kinematicPosition" colliders={false} position={[sx, sy, sz]}>
+      <RigidBody
+        ref={bodyRef}
+        type="kinematicPosition"
+        colliders={false}
+        position={[sx, sy, sz]}
+        userData={{ type: 'player', playerIndex }}
+      >
         <CapsuleCollider args={[0.6, 0.35]} />
       </RigidBody>
       <group ref={groupRef} position={[sx, sy - 0.95, sz]}>
@@ -76,6 +96,7 @@ const Character = forwardRef<CharacterRef, CharacterProps>((
           armLRef={armLRef} armRRef={armRRef}
           castShadow
         />
+        {children}
       </group>
     </>
   )
