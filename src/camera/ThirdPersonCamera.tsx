@@ -7,6 +7,10 @@ interface ThirdPersonCameraProps {
   target: React.RefObject<CharacterRef | null>
   offset?: THREE.Vector3
   orbitAngleRef?: React.MutableRefObject<number>
+  /** Initial zoom distance from the player (default ~21.26) */
+  initialRadius?: number
+  /** Initial vertical angle in radians — 0 = horizon, π/2 = top-down (default ~0.719 = 41°) */
+  initialElevation?: number
 }
 
 const DEFAULT_OFFSET = new THREE.Vector3(0, 14, -16)
@@ -17,6 +21,8 @@ const TOTAL_RADIUS = Math.sqrt(DEFAULT_OFFSET.y ** 2 + HORIZ_DIST ** 2)      // 
 const DEFAULT_ELEVATION = Math.atan2(DEFAULT_OFFSET.y, HORIZ_DIST)           // ~0.719 rad (~41°)
 const MIN_ELEVATION = 0.1   // ~6° from horizontal
 const MAX_ELEVATION = 1.5   // ~86° (nearly top-down)
+const MIN_RADIUS    = 4
+const MAX_RADIUS    = 60
 
 function dz(v: number, threshold = 0.15): number {
   return Math.abs(v) < threshold ? 0 : v
@@ -26,6 +32,8 @@ export default function ThirdPersonCamera({
   target,
   offset = DEFAULT_OFFSET,
   orbitAngleRef,
+  initialRadius    = TOTAL_RADIUS,
+  initialElevation = DEFAULT_ELEVATION,
 }: ThirdPersonCameraProps) {
   const { camera } = useThree()
   const smoothPos = useRef(new THREE.Vector3())
@@ -34,21 +42,49 @@ export default function ThirdPersonCamera({
   const isDragging = useRef(false)
   const lastPointerX = useRef(0)
   const lastPointerY = useRef(0)
-  const elevation = useRef(DEFAULT_ELEVATION)
+  const elevation = useRef(initialElevation)
+  const radius = useRef(initialRadius)
 
   // Backtick toggles mouse-drag orbit mode; resets angles on exit
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.code !== 'Backquote') return
-      orbitActive.current = !orbitActive.current
-      if (!orbitActive.current) {
-        if (orbitAngleRef) orbitAngleRef.current = 0
-        elevation.current = DEFAULT_ELEVATION
+      if (e.code === 'Backquote') {
+        orbitActive.current = !orbitActive.current
+        if (!orbitActive.current) {
+          if (orbitAngleRef) orbitAngleRef.current = 0
+          elevation.current = initialElevation
+          radius.current = initialRadius
+        }
+      }
+
+      // L key: log current camera values to console for tuning
+      if (e.code === 'KeyL') {
+        const az  = orbitAngleRef?.current ?? 0
+        const el  = elevation.current
+        const r   = radius.current
+        console.log(
+          `%c[Camera] radius: ${r.toFixed(2)}` +
+          `  elevation: ${el.toFixed(3)} rad (${(el * 180 / Math.PI).toFixed(1)}°)` +
+          `  azimuth: ${az.toFixed(3)} rad (${(az * 180 / Math.PI).toFixed(1)}°)`,
+          'background:#111;color:#0f0;padding:2px 6px;border-radius:3px;font-family:monospace'
+        )
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [orbitAngleRef])
+  }, [orbitAngleRef, initialElevation, initialRadius])
+
+  // Scroll wheel: zoom in/out (always active)
+  useEffect(() => {
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault()
+      radius.current = Math.max(MIN_RADIUS, Math.min(MAX_RADIUS,
+        radius.current + e.deltaY * 0.04
+      ))
+    }
+    window.addEventListener('wheel', onWheel, { passive: false })
+    return () => window.removeEventListener('wheel', onWheel)
+  }, [])
 
   // Mouse drag: horizontal = azimuth, vertical = elevation (orbit mode only)
   useEffect(() => {
@@ -100,7 +136,7 @@ export default function ThirdPersonCamera({
 
     const az = orbitAngleRef?.current ?? 0
     const el = elevation.current
-    const r = TOTAL_RADIUS
+    const r  = radius.current
 
     // Spherical coordinates → world offset
     const desired = new THREE.Vector3(

@@ -45,40 +45,6 @@ export default function JapanScene({ config, characterRef, joystickDir, jumpRef 
   const hasJumped = useRef(false)
 
   // Fail detection
-  const { setScreen } = useGameStore()
-
-  useEffect(() => {
-    // Escape / gamepad Start → pause
-    const onKey = (e: KeyboardEvent) => {
-      if (e.code === 'Escape') {
-        const screen = useGameStore.getState().screen
-        if (screen === 'PLAYING') useGameStore.getState().setScreen('PAUSED')
-        else if (screen === 'PAUSED') useGameStore.getState().setScreen('PLAYING')
-      }
-    }
-    window.addEventListener('keydown', onKey)
-
-    // Gamepad Start button (button 9) edge detection
-    let prevStart = false
-    let raf = 0
-    const pollStart = () => {
-      const gp = navigator.getGamepads()[0]
-      const pressed = gp?.buttons[9]?.pressed ?? false
-      if (pressed && !prevStart) {
-        const screen = useGameStore.getState().screen
-        if (screen === 'PLAYING') useGameStore.getState().setScreen('PAUSED')
-        else if (screen === 'PAUSED') useGameStore.getState().setScreen('PLAYING')
-      }
-      prevStart = pressed
-      raf = requestAnimationFrame(pollStart)
-    }
-    raf = requestAnimationFrame(pollStart)
-
-    return () => {
-      window.removeEventListener('keydown', onKey)
-      cancelAnimationFrame(raf)
-    }
-  }, [])
 
   useFrame(() => {
     const char = characterRef.current

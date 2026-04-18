@@ -8,7 +8,7 @@ export default function PauseMenu() {
     <PixelOverlayMenu
       title="Paused"
       items={[
-        { label: 'Resume',        accent: true,     onClick: () => setScreen('PLAYING') },
+        { label: 'Continue',       accent: true,     onClick: () => setScreen('PLAYING') },
         { label: 'Restart Level',                   onClick: () => retryLevel() },
         { label: 'Main Menu',     secondary: true,  onClick: () => setScreen('MAIN_MENU') },
       ]}

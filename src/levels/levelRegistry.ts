@@ -26,7 +26,11 @@ export interface LevelConfig {
   bgmTrack?: string
   winSubtitle?: string  // first line shown on the level-complete overlay
   winTitle?: string     // second line shown on the level-complete overlay
+  hideScoreDisplay?: boolean
 }
+
+// ── Kitchen level tuning ─────────────────────────────────────────────────────
+export const KITCHEN_SCORE_TARGET = 8   // 3 🍍 threshold — change here to tune
 
 // ── Drive level tuning ────────────────────────────────────────────────────────
 const DRIVE_LEVEL_DISTANCE = 1600  // distance units to travel before level completes (higher = longer)
@@ -68,5 +72,33 @@ export const LEVELS: LevelConfig[] = [
     fail: { type: 'battery_dead' },
     winSubtitle: 'You drove the EV all the way to the Lakes!',
     winTitle: 'Time for some cake...',
+  },
+  {
+    id: 'kitchen_cake',
+    index: 2,
+    name: 'Kitchen',
+    sceneKey: 'KitchenScene',
+    player1Start: [-2.571, 1.005, -1.255],
+    player2Start: [-2.554, 0.983, -2.519],
+    buddyStart:   [-2.571, 1.005, -1.255],
+    gravity: [0, -35, 0],
+    completion: { type: 'score_target', target: 999 },
+    fail: { type: 'none' },
+    hideScoreDisplay: true,
+  },
+  {
+    id: 'bar_pub',
+    index: 3,
+    name: 'The Pub',
+    sceneKey: 'BarScene',
+    player1Start: [4.76, 1.17, 0],
+    player2Start: [-3.612, 1.164, -1.68],
+    buddyStart:   [-3.612, 1.164, -1.68],
+    gravity: [0, -35, 0],
+    completion: { type: 'score_target', target: 999 },
+    fail: { type: 'none' },
+    hideScoreDisplay: true,
+    winSubtitle: 'What a pub crawl!',
+    winTitle: 'Cheers!',
   },
 ]

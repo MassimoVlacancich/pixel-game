@@ -291,20 +291,14 @@ howler ^2.2  +  @types/howler   (devDep)
 
 ## Upcoming Levels
 
-### Level 2 — Drive the EV
-**Concept:** Player drives an EV along a road, avoiding oncoming cars while collecting lightning bolt pickups to maintain battery charge.
-- **Charge mechanic:** starts at 100%, drains over time. Must collect at least 1 bolt every 10 seconds to survive. Reaching 0% = fail.
-- **Charging station bonus:** stopping at a marked charging station and waiting (staying still for a few seconds) restores charge and awards extra points.
-- **Hazards:** colliding with oncoming cars or driving over certain road sections (potholes, oil slicks) drains charge faster.
-- **Completion:** reach the destination with charge > 0.
-- **2P:** both players share the car, or each drives a separate lane.
 
-### Level 3 — The Hidden Cave
-**Concept:** Hike up a mountain. Player has an energy bar that depletes while walking; must collect Chocopina snacks along the trail to replenish it.
-- **Hidden cave challenge:** the cave entrance is not visible from the main path. Scattered environmental hints (footprints, a torn map piece, a peculiar rock formation) guide the player. Wrong paths waste energy.
-- **Inside the cave:** dark interior; player must navigate to the far exit. Possible challenge: avoid bats/falling rocks, find a torch pickup to see further, or solve a simple block-pushing puzzle to open the exit.
-- **Completion:** exit the cave from the far side.
-- **Fail:** energy hits 0 on the mountain, or player is trapped in the cave too long.
+### Level 3 — Overcooked (Birthday Cake Edition)
+**Concept:** Top-down kitchen. Players pick up ingredients, chop at a chopping board, cook at an oven, then plate and deliver based on a scrolling queue of birthday cake orders.
+- **Stations:** ingredient shelf → chopping board → oven/mixer → plating counter → delivery hatch.
+- **Orders:** different cake types (chocolate, strawberry, rainbow) each need different ingredient combos. Queue fills over time; expired orders = penalty.
+- **Win condition:** deliver at least X cakes before time runs out.
+- **2P:** split the kitchen — one chops, one cooks, must coordinate. Each player can only carry one item at a time.
+- **Fail:** too many expired orders OR time runs out with fewer than X deliveries.
 
 ### Level 4 — The Pub
 **Concept:** A cosy pixel pub with two mini-games played back-to-back (or head-to-head in 2P).
@@ -313,13 +307,13 @@ howler ^2.2  +  @types/howler   (devDep)
 - **2P:** head-to-head on both mini-games; winner of each earns a point. Best of 2 wins the level.
 - **Solo:** beat a score threshold on each mini-game to pass.
 
-### Level 5 — Overcooked (Birthday Cake Edition)
-**Concept:** Top-down kitchen. Players pick up ingredients, chop at a chopping board, cook at an oven, then plate and deliver based on a scrolling queue of birthday cake orders.
-- **Stations:** ingredient shelf → chopping board → oven/mixer → plating counter → delivery hatch.
-- **Orders:** different cake types (chocolate, strawberry, rainbow) each need different ingredient combos. Queue fills over time; expired orders = penalty.
-- **Win condition:** deliver at least X cakes before time runs out.
-- **2P:** split the kitchen — one chops, one cooks, must coordinate. Each player can only carry one item at a time.
-- **Fail:** too many expired orders OR time runs out with fewer than X deliveries.
+
+### Level 5 — The Hidden Cave and walk
+**Concept:** Hike up a mountain. Player has an energy bar that depletes while walking; must collect Chocopina snacks along the trail to replenish it.
+- **Hidden cave challenge:** the cave entrance is not visible from the main path. Scattered environmental hints (footprints, a torn map piece, a peculiar rock formation) guide the player. Wrong paths waste energy.
+- **Inside the cave:** dark interior; player must navigate to the far exit. Possible challenge: avoid bats/falling rocks, find a torch pickup to see further, or solve a simple block-pushing puzzle to open the exit.
+- **Completion:** exit the cave from the far side.
+- **Fail:** energy hits 0 on the mountain, or player is trapped in the cave too long.
 
 ### Level 6 — The Long Walk (Final Level)
 **Concept:** A peaceful, emotional finale. Players simply walk together up a long hill. No fail state, no combat.

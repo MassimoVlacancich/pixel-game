@@ -1,5 +1,8 @@
 import { Canvas } from '@react-three/fiber'
-import { Suspense, useRef, useEffect } from 'react'
+import { Suspense, useRef, useEffect, lazy } from 'react'
+
+// Dev tool — tree-shaken in production when ?tool= is never set
+const SceneBuilder = lazy(() => import('./tools/sceneBuilder/SceneBuilder'))
 import { PALETTE } from './palette'
 import { useGameStore } from './store/useGameStore'
 import { unlockAudio } from './audio/AudioManager'
@@ -20,8 +23,18 @@ import type { CharacterRef } from './character/Character'
 import type { JoystickDir } from './controls/VirtualJoystick'
 
 const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+const isSceneBuilder = new URLSearchParams(window.location.search).get('tool') === 'scene-builder'
 
 export default function App() {
+  // Dev tool shortcut — renders nothing else
+  if (isSceneBuilder) {
+    return (
+      <Suspense fallback={<div style={{ color: '#fff', padding: 20 }}>Loading builder…</div>}>
+        <SceneBuilder />
+      </Suspense>
+    )
+  }
+
   const screen = useGameStore((s) => s.screen)
   const levelIndex = useGameStore((s) => s.levelIndex)
   const loadSave = useGameStore((s) => s.loadSave)

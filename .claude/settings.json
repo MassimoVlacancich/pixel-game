@@ -4,7 +4,17 @@
       "Bash(git branch:*)",
       "Bash(git rebase:*)",
       "Bash(xargs basename:*)",
-      "Bash(node -e \"require\\('three/addons/loaders/OBJLoader.js'\\)\")"
+      "Bash(node -e \"require\\('three/addons/loaders/OBJLoader.js'\\)\")",
+      "Bash(grep -i \"\\\\.tsx$\")",
+      "WebFetch(domain:www.mastersofgames.com)",
+      "WebFetch(domain:www.tradgames.org.uk)",
+      "WebFetch(domain:thecrib.uk)",
+      "WebFetch(domain:www.libertygames.co.uk)",
+      "WebFetch(domain:boombattlebar.com)",
+      "Bash(python -c ' *)",
+      "Bash(node -e \"const p = require\\('./node_modules/three/package.json'\\); console.log\\('three version:', p.version\\)\")",
+      "Bash(node -e ' *)",
+      "Bash(python enrich_scene.py)"
     ],
     "additionalDirectories": [
       "d:\\Users\\massi\\Documents\\Projects\\pixel-game"
