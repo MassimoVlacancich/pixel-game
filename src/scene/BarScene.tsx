@@ -372,7 +372,7 @@ export default function BarScene({ config, characterRef, joystickDir, jumpRef }:
         </RigidBody>
 
         {/* ── Colliders: all __collider:box entries from bar.json (walls, counter, tables) ── */}
-        <SceneColliders objects={barSceneData.objects as Parameters<typeof SceneColliders>[0]['objects']} />
+        <SceneColliders objects={barSceneData.objects as unknown as Parameters<typeof SceneColliders>[0]['objects']} />
 
         {/* ── Bar environment model ── */}
         <SceneObjModel

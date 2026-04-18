@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef } from 'react'
 import { Sky } from '@react-three/drei'
 import { Physics } from '@react-three/rapier'
 import { useFrame } from '@react-three/fiber'
@@ -62,7 +62,6 @@ export default function JapanScene({ config, characterRef, joystickDir, jumpRef 
 
     // Tutorial completion checks
     if (config.completion.type === 'tutorial_steps') {
-      const steps = config.completion.steps
       const step = tutorialStep.current
 
       if (step === 0 && !hasMoved.current) {

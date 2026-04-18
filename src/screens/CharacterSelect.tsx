@@ -9,7 +9,6 @@ import bg from '../assets/background1.png?url'
 // Zone 0 = mode, Zone 1 = P1 character, Zone 2 = P2/buddy character, Zone 3 = actions
 type Zone = 0 | 1 | 2 | 3
 
-const TEXT_OUTLINE = '-3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000'
 const TEXT_OUTLINE_SM = '-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000'
 
 function nextIdx(current: number, dir: 1 | -1, list: unknown[], takenId: string | null): number {
@@ -23,7 +22,7 @@ function nextIdx(current: number, dir: 1 | -1, list: unknown[], takenId: string 
 
 export default function CharacterSelect() {
   const {
-    player1CharacterId, player2CharacterId, buddyCharacterId, isTwoPlayer,
+    player1CharacterId, isTwoPlayer,
     setPlayer1Character, setPlayer2Character, setBuddyCharacter, setTwoPlayer,
     startLevel, levelIndex, setScreen, persistSave,
   } = useGameStore()

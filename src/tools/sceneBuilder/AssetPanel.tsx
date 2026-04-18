@@ -158,7 +158,7 @@ function SectionHeader({ label }: { label: string }) {
 }
 
 function SceneRow({
-  id, label, color, isSelected, onSelect,
+  label, color, isSelected, onSelect,
   isHidden, onToggleHidden,
 }: {
   id: string; label: string; color: string; isSelected: boolean; onSelect: () => void

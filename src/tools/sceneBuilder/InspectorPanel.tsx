@@ -742,8 +742,8 @@ interface PaintBrushInspectorProps {
 }
 
 function PaintBrushInspector({
-  paintScale, paintRotationRandom, paintBaseY,
-  onPaintScaleChange, onPaintRotationRandomChange, onPaintBaseYChange,
+  paintScale: _paintScale, paintRotationRandom, paintBaseY,
+  onPaintScaleChange: _onPaintScaleChange, onPaintRotationRandomChange, onPaintBaseYChange,
 }: PaintBrushInspectorProps) {
   return (
     <>

@@ -74,7 +74,7 @@ export default function ExportPanel({ sceneName, onSceneNameChange, onSave, onLo
   )
 }
 
-function btnStyle(bg: string, color: string, hoverBg: string): React.CSSProperties {
+function btnStyle(bg: string, color: string, _hoverBg: string): React.CSSProperties {
   return {
     fontFamily: FONT, fontSize: 7, letterSpacing: 1,
     padding: '7px 10px', cursor: 'pointer',

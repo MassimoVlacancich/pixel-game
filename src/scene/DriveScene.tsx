@@ -65,8 +65,6 @@ export default function DriveScene({ config }: LevelSceneProps) {
   const signRef    = useRef<THREE.Group>(null)
   const flySpeed   = useRef(0)
   const clearHazardsRef = useRef(false)
-  const frozenCamPos = useRef(new THREE.Vector3())
-  const frozenCamLook = useRef(new THREE.Vector3())
 
   const dashZsCenter = useRef(Array.from({ length: DASH_N }, (_, i) => i * DASH_SPACING))
   const dashZsLeft   = useRef(Array.from({ length: DASH_N }, (_, i) => i * DASH_SPACING))
