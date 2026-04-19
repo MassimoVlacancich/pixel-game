@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react'
 import { useGameStore } from '../store/useGameStore'
 import { useMenuInput } from '../hooks/useMenuInput'
 import bg from '../assets/background1.png?url'
+import { isTouchDevice } from '../App'
+
+// iOS Safari doesn't support requestFullscreen — detect it so we can show a hint
+const isIosSafari = /iP(hone|ad|od)/.test(navigator.userAgent) && !(window as Window & { MSStream?: unknown }).MSStream
 
 const ITEMS = ['PLAY', 'SETTINGS'] as const
 type MenuItem = typeof ITEMS[number]
@@ -51,15 +55,17 @@ export default function MainMenu() {
     if (input.confirm) activate(ITEMS[cursor])
   })
 
+  const m = isTouchDevice
+
   return (
     <div style={{
-      width: '100vw', height: '100vh',
+      width: '100vw', height: '100dvh',
       background: `url(${bg}) center/cover no-repeat`,
       imageRendering: 'pixelated',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'space-between',
       fontFamily: px.font, position: 'relative', overflow: 'hidden',
-      paddingBottom: 32, paddingTop: 40,
+      paddingBottom: m ? 16 : 32, paddingTop: m ? 16 : 40,
     }}>
       {/* Dark overlay */}
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)', pointerEvents: 'none', zIndex: 0 }} />
@@ -86,37 +92,35 @@ export default function MainMenu() {
       {/* Title — top */}
       <div style={{ position: 'relative', zIndex: 2, textAlign: 'center' }}>
         <h1 style={{
-          fontSize: 32, color: px.green, marginBottom: 0,
-          textShadow: TEXT_OUTLINE,
-          lineHeight: 1.5, letterSpacing: 3,
+          fontSize: m ? 18 : 32, color: px.green, marginBottom: 0,
+          textShadow: TEXT_OUTLINE, lineHeight: 1.5, letterSpacing: 3,
         }}>NICK & PHOEBE'S</h1>
         <h1 style={{
-          fontSize: 32, color: px.white, marginBottom: 0,
-          textShadow: TEXT_OUTLINE,
-          lineHeight: 1.5, letterSpacing: 3,
+          fontSize: m ? 18 : 32, color: px.white, marginBottom: 0,
+          textShadow: TEXT_OUTLINE, lineHeight: 1.5, letterSpacing: 3,
         }}>ADVENTURE TIME</h1>
       </div>
 
       {/* Menu items — center */}
-      <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', gap: 28, alignItems: 'center' }}>
+      <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', gap: m ? 14 : 28, alignItems: 'center' }}>
         {ITEMS.map((item, i) => (
           <div
             key={item}
             onMouseEnter={() => setCursor(i)}
             onClick={() => activate(item)}
             style={{
-              display: 'flex', alignItems: 'center', gap: 20,
+              display: 'flex', alignItems: 'center', gap: m ? 12 : 20,
               cursor: 'pointer', userSelect: 'none',
             }}
           >
             <span style={{
-              color: px.green, fontSize: 28,
+              color: px.green, fontSize: m ? 16 : 28,
               textShadow: TEXT_OUTLINE,
               visibility: i === cursor && blink ? 'visible' : 'hidden',
-              width: 24,
+              width: m ? 14 : 24,
             }}>►</span>
             <span style={{
-              fontSize: 28,
+              fontSize: m ? 16 : 28,
               color: i === cursor ? px.white : 'rgba(255,255,255,0.4)',
               letterSpacing: 4,
               textShadow: i === cursor ? TEXT_OUTLINE : 'none',
@@ -126,9 +130,16 @@ export default function MainMenu() {
       </div>
 
       {/* Hint — bottom */}
-      <p style={{ position: 'relative', zIndex: 2, fontSize: 8, color: 'rgba(255,255,255,0.55)', letterSpacing: 2, textAlign: 'center' }}>
-        ARROW KEYS / D-PAD · ENTER / A
-      </p>
+      <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <p style={{ fontSize: 8, color: 'rgba(255,255,255,0.55)', letterSpacing: 2 }}>
+          ARROW KEYS / D-PAD · ENTER / A
+        </p>
+        {isIosSafari && (
+          <p style={{ fontSize: 7, color: 'rgba(255,255,255,0.38)', letterSpacing: 1 }}>
+            TAP ⬆ SHARE → ADD TO HOME SCREEN FOR FULLSCREEN
+          </p>
+        )}
+      </div>
     </div>
   )
 }

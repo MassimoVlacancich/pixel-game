@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { CHARACTERS, BUDDIES, type CharacterConfig } from '../character/characterRegistry'
 import { useGameStore } from '../store/useGameStore'
 import { useMenuInput } from '../hooks/useMenuInput'
 import CharacterPreviewCanvas from './CharacterPreviewCanvas'
 import { px } from './MainMenu'
+import { isTouchDevice } from '../App'
 import bg from '../assets/background1.png?url'
 
 // Zone 0 = mode, Zone 1 = P1 character, Zone 2 = P2/buddy character, Zone 3 = actions
@@ -54,6 +55,10 @@ export default function CharacterSelect() {
     persistSave()
     startLevel(levelIndex)
   }
+
+  // On touch devices skip the selection screen — use current defaults immediately.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { if (isTouchDevice) confirmAll() }, [])
 
   const doBack = () => {
     if (zone > 0) setZone((z) => (z - 1) as Zone)

@@ -1,10 +1,11 @@
-import { useState, Suspense, useRef } from 'react'
+import { useState, Suspense, useRef, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { CARS, getCarById } from '../scene/carRegistry'
 import DriveCarModel from '../scene/DriveCarModel'
 import { useGameStore } from '../store/useGameStore'
 import { useMenuInput } from '../hooks/useMenuInput'
 import { px } from './MainMenu'
+import { isTouchDevice } from '../App'
 import bg from '../assets/background1.png?url'
 
 const TEXT_OUTLINE = '-3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000'
@@ -68,6 +69,10 @@ export default function CarSelect() {
     persistSave()
     startLevel(levelIndex)
   }
+
+  // On touch devices skip the selection screen — use current defaults immediately.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { if (isTouchDevice) confirm() }, [])
 
   useMenuInput(0, (input) => {
     if (input.left)  prev()

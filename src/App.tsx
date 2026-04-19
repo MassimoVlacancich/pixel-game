@@ -18,11 +18,12 @@ import BatteryDisplay from './hud/BatteryDisplay'
 import SplatterOverlay from './hud/SplatterOverlay'
 import WinFade from './hud/WinFade'
 import VirtualJoystick from './controls/VirtualJoystick'
+import ButtonDiamond from './controls/ButtonDiamond'
 import { LEVELS } from './levels/levelRegistry'
 import type { CharacterRef } from './character/Character'
 import type { JoystickDir } from './controls/VirtualJoystick'
 
-const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+export const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
 const isSceneBuilder = new URLSearchParams(window.location.search).get('tool') === 'scene-builder'
 
 export default function App() {
@@ -92,21 +93,7 @@ export default function App() {
             </div>
           ) : undefined}
           jumpButtonNode={isTouchDevice ? (
-            <div
-              onPointerDown={() => { jumpRef.current = true }}
-              style={{
-                position: 'absolute',
-                bottom: 'calc(28px + env(safe-area-inset-bottom))',
-                right: 'calc(28px + env(safe-area-inset-right))',
-                width: 64, height: 64, borderRadius: '50%',
-                background: 'rgba(255,255,255,0.22)',
-                border: '2.5px solid rgba(255,255,255,0.5)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                touchAction: 'none', userSelect: 'none',
-                color: 'rgba(255,255,255,0.85)', fontSize: 22,
-                pointerEvents: 'auto',
-              }}
-            >↑</div>
+            <ButtonDiamond jumpRef={jumpRef} />
           ) : undefined}
         />
       )}

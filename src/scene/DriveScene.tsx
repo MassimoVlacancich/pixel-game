@@ -43,7 +43,7 @@ function CameraRig({
   return null
 }
 
-export default function DriveScene({ config }: LevelSceneProps) {
+export default function DriveScene({ config, joystickDir }: LevelSceneProps) {
   const carConfig = getCarById(useGameStore.getState().selectedCarId)
   const lanePos = useRef(0)
   const speed = useRef(0)
@@ -174,8 +174,14 @@ export default function DriveScene({ config }: LevelSceneProps) {
     const gp = navigator.getGamepads()[0]
     const rtAxis = gp?.axes[5] ?? -1
     const rt = Math.max(0, (rtAxis + 1) / 2)
-    const throttle = rt > 0.05 || keys.current.up || (gp?.buttons[7]?.pressed ?? false)
-    const braking  = (gp?.buttons[1]?.pressed ?? false) || keys.current.down
+
+    // Virtual joystick: z > 0 = forward (throttle), z < 0 = backward (brake)
+    //                   x is negated — push right gives x < 0 in VirtualJoystick
+    const joyZ = joystickDir?.current.z ?? 0
+    const joyX = joystickDir?.current.x ?? 0  // push right = negative
+
+    const throttle = rt > 0.05 || keys.current.up || joyZ > 0.1 || (gp?.buttons[7]?.pressed ?? false)
+    const braking  = (gp?.buttons[1]?.pressed ?? false) || keys.current.down || joyZ < -0.1
 
     if (throttle) speed.current += (rt > 0.05 ? rt : 1) * 14 * delta
     if (braking) {
@@ -188,7 +194,8 @@ export default function DriveScene({ config }: LevelSceneProps) {
 
     const stickX = gp?.axes[0] ?? 0
     const kDir = (keys.current.right ? 1 : 0) - (keys.current.left ? 1 : 0)
-    lanePos.current -= (stickX + kDir) * (LATERAL_BASE + speed.current * LATERAL_SCALE) * delta
+    // joyX is negated relative to gamepad convention (right = positive), so negate it back
+    lanePos.current -= (stickX - joyX + kDir) * (LATERAL_BASE + speed.current * LATERAL_SCALE) * delta
     lanePos.current = Math.max(-1.05, Math.min(1.05, lanePos.current))
 
     // Car Z: lerp toward position based on speed (slow = near camera, fast = forward)

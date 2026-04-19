@@ -56,6 +56,7 @@ export const LEVELS: LevelConfig[] = [
       'Walk to the shrine to complete the level',
     ],
     bgmTrack: 'japan',
+    hideScoreDisplay: true,
     winSubtitle: 'You are now ready to pick up your EV!',
     winTitle: 'Time to hit the road...',
   },

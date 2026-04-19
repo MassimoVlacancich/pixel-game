@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { px } from '../screens/MainMenu'
 import { useMenuInput } from '../hooks/useMenuInput'
+import { isTouchDevice } from '../App'
 
 const TEXT_OUTLINE = '-3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000'
 const TEXT_OUTLINE_SM = '-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000'
@@ -28,6 +29,7 @@ interface Props {
 
 export default function PixelOverlayMenu({ title, subtitle, subtitleStyle, info, items, children }: Props) {
   const [cursor, setCursor] = useState(0)
+  const m = isTouchDevice
 
   useMenuInput(0, (input) => {
     if (input.up)      setCursor((c) => (c - 1 + items.length) % items.length)
@@ -44,6 +46,7 @@ export default function PixelOverlayMenu({ title, subtitle, subtitleStyle, info,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontFamily: px.font,
       pointerEvents: 'auto',
+      overflowY: 'auto',
     }}>
       {/* Scanlines */}
       <div style={{ position: 'absolute', inset: 0, background: px.scanline, pointerEvents: 'none' }} />
@@ -52,23 +55,24 @@ export default function PixelOverlayMenu({ title, subtitle, subtitleStyle, info,
         position: 'relative', zIndex: 1,
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         gap: 0, textAlign: 'center', width: '100%', maxWidth: 520,
-        padding: '0 24px',
+        padding: m ? '8px 16px' : '0 24px',
       }}>
         {/* Subtitle (e.g. "LEVEL COMPLETE") */}
         {subtitle && (
           <p style={{
-            fontSize: 9, letterSpacing: 4, color: px.green,
+            fontSize: m ? 6 : 9, letterSpacing: 4, color: px.green,
             textShadow: TEXT_OUTLINE_SM,
-            marginBottom: 12,
+            marginBottom: m ? 6 : 12,
             ...subtitleStyle,
+            ...(m && subtitleStyle?.fontSize ? { fontSize: Number(subtitleStyle.fontSize) * 0.65 } : {}),
           }}>{subtitle.toUpperCase()}</p>
         )}
 
         {/* Title */}
         <h1 style={{
-          fontSize: 32, color: px.white, letterSpacing: 3,
+          fontSize: m ? 18 : 32, color: px.white, letterSpacing: 3,
           textShadow: TEXT_OUTLINE,
-          marginBottom: info && info.length ? 32 : 48,
+          marginBottom: m ? 12 : (info && info.length ? 32 : 48),
           lineHeight: 1.4,
         }}>{title.toUpperCase()}</h1>
 
@@ -78,26 +82,26 @@ export default function PixelOverlayMenu({ title, subtitle, subtitleStyle, info,
         {/* Info rows (score, best, etc.) */}
         {info && info.length > 0 && (
           <div style={{
-            width: '100%', marginBottom: 40,
-            border: `4px solid ${px.dim}`,
+            width: '100%', marginBottom: m ? 12 : 40,
+            border: `${m ? 2 : 4}px solid ${px.dim}`,
             boxShadow: '4px 4px 0 #000',
           }}>
             {info.map((row, i) => (
               <div key={i} style={{
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                padding: '12px 24px',
+                padding: m ? '6px 14px' : '12px 24px',
                 background: i % 2 === 0 ? px.panel : px.bg,
                 borderBottom: i < info.length - 1 ? `2px solid ${px.dim}` : undefined,
               }}>
-                <span style={{ fontSize: 8, color: px.dim, letterSpacing: 2 }}>{row.label.toUpperCase()}</span>
-                <span style={{ fontSize: 14, color: px.cream, textShadow: TEXT_OUTLINE_SM }}>{row.value}</span>
+                <span style={{ fontSize: m ? 5 : 8, color: px.dim, letterSpacing: 2 }}>{row.label.toUpperCase()}</span>
+                <span style={{ fontSize: m ? 9 : 14, color: px.cream, textShadow: TEXT_OUTLINE_SM }}>{row.value}</span>
               </div>
             ))}
           </div>
         )}
 
         {/* Menu items */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: m ? 8 : 16, width: '100%' }}>
           {items.map((item, i) => {
             const focused = i === cursor
             const borderColor = focused
@@ -114,10 +118,10 @@ export default function PixelOverlayMenu({ title, subtitle, subtitleStyle, info,
                 onClick={item.onClick}
                 style={{
                   fontFamily: px.font,
-                  fontSize: 14, letterSpacing: 2,
-                  padding: '16px 32px',
+                  fontSize: m ? 8 : 14, letterSpacing: 2,
+                  padding: m ? '10px 16px' : '16px 32px',
                   cursor: 'pointer',
-                  border: `4px solid ${borderColor}`,
+                  border: `${m ? 2 : 4}px solid ${borderColor}`,
                   background: bg,
                   color,
                   textShadow: focused && item.secondary ? TEXT_OUTLINE_SM : 'none',
@@ -135,9 +139,11 @@ export default function PixelOverlayMenu({ title, subtitle, subtitleStyle, info,
           })}
         </div>
 
-        <p style={{ marginTop: 24, fontSize: 7, color: 'rgba(255,255,255,0.3)', letterSpacing: 1 }}>
-          ↑ ↓ TO SELECT · A / ENTER TO CONFIRM
-        </p>
+        {!m && (
+          <p style={{ marginTop: 24, fontSize: 7, color: 'rgba(255,255,255,0.3)', letterSpacing: 1 }}>
+            ↑ ↓ TO SELECT · A / ENTER TO CONFIRM
+          </p>
+        )}
       </div>
     </div>
   )
